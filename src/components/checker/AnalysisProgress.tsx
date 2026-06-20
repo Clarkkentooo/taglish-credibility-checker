@@ -2,14 +2,21 @@ const steps = ["Checking language patterns", "Comparing model predictions", "Pre
 
 export function AnalysisProgress() {
   return (
-    <div className="rounded-xl border border-border bg-surface p-5" role="status" aria-live="polite">
-      <p className="font-semibold">Analyzing misinformation-associated signals...</p>
-      <ol className="mt-4 space-y-3">
+    <div className="rounded-[1.5rem] border border-border bg-surface p-5" role="status" aria-live="polite">
+      <p className="font-semibold">Generating suspicion result...</p>
+      <p className="mt-1 text-sm text-muted">Analyzing misinformation-associated signals...</p>
+      <div className="mt-4 space-y-3" aria-hidden="true">
+        <div className="h-20 animate-pulse rounded-[1.25rem] bg-canvas" />
+        <div className="h-3 w-3/4 animate-pulse rounded-full bg-border" />
+        <div className="h-3 w-1/2 animate-pulse rounded-full bg-border" />
+        <div className="grid gap-2">
+          <div className="h-12 animate-pulse rounded-xl bg-canvas" />
+          <div className="h-12 animate-pulse rounded-xl bg-canvas" />
+        </div>
+      </div>
+      <ol className="sr-only">
         {steps.map((step, index) => (
-          <li key={step} className="flex items-center gap-3 text-sm text-muted">
-            <span className="grid h-7 w-7 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">{index + 1}</span>
-            {step}
-          </li>
+          <li key={step}>{index + 1}. {step}</li>
         ))}
       </ol>
     </div>

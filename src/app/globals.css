@@ -65,6 +65,28 @@ select {
   outline-offset: 3px;
 }
 
+.result-scrollbar {
+  scrollbar-color: rgb(var(--color-muted) / 0.28) transparent;
+  scrollbar-width: thin;
+}
+
+.result-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.result-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.result-scrollbar::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-muted) / 0.22);
+  border-radius: 999px;
+}
+
+.result-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--color-muted) / 0.34);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -1,25 +1,30 @@
 "use client";
 
-import { FileText, ImageUp, RotateCcw, Trash2, Type } from "lucide-react";
+import { Eye, EyeOff, FileText, ImageUp, RotateCcw, Trash2, Type } from "lucide-react";
 import { type DragEvent, type ChangeEvent, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/config/brand";
 import { countWords } from "@/lib/utils";
+import { InlineHighlightedText } from "@/components/results/InlineHighlightedText";
+import type { AnalysisResult } from "@/types/analysis";
 
 export function TextAnalysisEditor({
   value,
   onChange,
   onAnalyze,
   loading,
+  result,
 }: {
   value: string;
   onChange: (value: string) => void;
   onAnalyze: () => void;
   loading: boolean;
+  result?: AnalysisResult | null;
 }) {
   const [uploadMessage, setUploadMessage] = useState("");
   const [dragging, setDragging] = useState(false);
   const [inputMode, setInputMode] = useState<"text" | "image">("text");
+  const [highlightMode, setHighlightMode] = useState<"before" | "after">("after");
   const fileRef = useRef<HTMLInputElement>(null);
   const words = useMemo(() => countWords(value), [value]);
   const tooShort = value.trim().length > 0 && value.trim().length < 50;
@@ -53,13 +58,37 @@ export function TextAnalysisEditor({
   }
 
   return (
-    <section className="rounded-[1.75rem] border border-white/70 bg-white/78 p-5 shadow-soft backdrop-blur-xl" aria-labelledby="editor-heading">
+    <section className="rounded-[1.75rem] border border-border/70 bg-white p-5" aria-labelledby="editor-heading">
       <div className="flex flex-col items-center gap-3 text-center">
         <div>
           <h1 id="editor-heading" className="text-3xl font-black tracking-[0.015em]">Check Taglish content</h1>
           <p className="mt-1 text-sm text-muted">Paste election-related content or upload text/image material for a mock OCR-ready flow.</p>
         </div>
-        <div className="flex flex-wrap justify-center gap-2">
+      </div>
+      <div className="mt-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex w-fit rounded-full border border-border bg-white p-1" role="tablist" aria-label="Input type">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={inputMode === "text"}
+            onClick={() => setInputMode("text")}
+            className={`inline-flex min-h-10 items-center rounded-full px-4 text-sm font-semibold transition-colors ${inputMode === "text" ? "bg-ink text-white" : "text-muted hover:bg-canvas hover:text-ink"}`}
+          >
+            <Type className="mr-2 h-4 w-4" aria-hidden="true" />
+            Text
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={inputMode === "image"}
+            onClick={() => setInputMode("image")}
+            className={`inline-flex min-h-10 items-center rounded-full px-4 text-sm font-semibold transition-colors ${inputMode === "image" ? "bg-ink text-white" : "text-muted hover:bg-canvas hover:text-ink"}`}
+          >
+            <ImageUp className="mr-2 h-4 w-4" aria-hidden="true" />
+            Image
+          </button>
+        </div>
+        <div className="flex flex-wrap justify-start gap-2 lg:justify-end">
           <Button variant="secondary" onClick={() => onChange(brand.sampleText)}>
             <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
             Load sample
@@ -70,36 +99,48 @@ export function TextAnalysisEditor({
           </Button>
         </div>
       </div>
-      <div className="mx-auto mt-5 flex w-fit rounded-full border border-white/80 bg-white/55 p-1 shadow-inner" role="tablist" aria-label="Input type">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={inputMode === "text"}
-          onClick={() => setInputMode("text")}
-          className={`inline-flex min-h-10 items-center rounded-full px-4 text-sm font-semibold ${inputMode === "text" ? "bg-ink text-white shadow-sm" : "text-muted"}`}
-        >
-          <Type className="mr-2 h-4 w-4" aria-hidden="true" />
-          Text
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={inputMode === "image"}
-          onClick={() => setInputMode("image")}
-          className={`inline-flex min-h-10 items-center rounded-full px-4 text-sm font-semibold ${inputMode === "image" ? "bg-ink text-white shadow-sm" : "text-muted"}`}
-        >
-          <ImageUp className="mr-2 h-4 w-4" aria-hidden="true" />
-          Image
-        </button>
-      </div>
       {inputMode === "text" ? (
-        <textarea
-          aria-describedby="editor-help editor-count"
-          className="mt-4 min-h-[360px] w-full resize-y rounded-[1.5rem] border border-white/80 bg-white/60 p-5 leading-7 text-ink shadow-inner backdrop-blur transition placeholder:text-muted focus:border-primary"
-          placeholder="Paste a Taglish election-related post, caption, or thread excerpt..."
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-        />
+        <>
+          {result ? (
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm font-medium text-muted">Review source text</p>
+              <div className="flex rounded-full border border-border bg-white p-1" aria-label="Highlight mode">
+                <button
+                  type="button"
+                  onClick={() => setHighlightMode("before")}
+                  className={`inline-flex min-h-9 items-center rounded-full px-3 text-sm font-semibold transition-colors ${highlightMode === "before" ? "bg-ink text-white" : "text-muted hover:bg-canvas hover:text-ink"}`}
+                >
+                  <EyeOff className="mr-2 h-4 w-4" aria-hidden="true" />
+                  Before
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setHighlightMode("after")}
+                  className={`inline-flex min-h-9 items-center rounded-full px-3 text-sm font-semibold transition-colors ${highlightMode === "after" ? "bg-ink text-white" : "text-muted hover:bg-canvas hover:text-ink"}`}
+                >
+                  <Eye className="mr-2 h-4 w-4" aria-hidden="true" />
+                  After
+                </button>
+              </div>
+            </div>
+          ) : null}
+          {result && highlightMode === "after" ? (
+            <InlineHighlightedText
+              text={value}
+              spans={result.highlightedSpans}
+              className="mt-4 min-h-[360px] w-full rounded-[1.5rem] border border-border bg-white p-5 text-ink"
+            />
+          ) : (
+            <textarea
+              aria-describedby="editor-help editor-count"
+              className="mt-4 min-h-[360px] w-full resize-y rounded-[1.5rem] border border-border bg-white p-5 leading-7 text-ink transition placeholder:text-muted focus:border-primary"
+              placeholder="Paste a Taglish election-related post, caption, or thread excerpt..."
+              value={value}
+              onChange={(event) => onChange(event.target.value)}
+              readOnly={Boolean(result && highlightMode === "before")}
+            />
+          )}
+        </>
       ) : (
         <div
           onDragOver={(event) => {

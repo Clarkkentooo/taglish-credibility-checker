@@ -5,7 +5,7 @@ export function BrandLogo({ href = "/", compact = false }: { href?: string; comp
   return (
     <Link href={href} className="inline-flex items-center gap-2 rounded-lg">
       <span
-        className="h-9 w-9 bg-ink shadow-glow"
+        className="h-9 w-9 bg-ink"
         aria-hidden="true"
         style={{
           WebkitMask: "url(/main-logo.svg) center / contain no-repeat",

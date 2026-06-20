@@ -45,25 +45,32 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
   }
 
   return (
-    <div className={cn("grid gap-5", resultsOpen ? "xl:grid-cols-[minmax(560px,1fr)_420px]" : "xl:grid-cols-1")}>
-      <div className="mx-auto w-full max-w-3xl space-y-4">
-        <div className="flex justify-end">
-          <Button variant="secondary" onClick={() => setResultsOpen((value) => !value)} aria-expanded={resultsOpen} aria-controls="analysis-result-sidebar">
-            {resultsOpen ? <PanelRightClose className="mr-2 h-4 w-4" /> : <PanelRightOpen className="mr-2 h-4 w-4" />}
-            {resultsOpen ? "Hide result panel" : "Show result panel"}
-          </Button>
-        </div>
+    <div className={cn("relative grid gap-5", resultsOpen ? "xl:grid-cols-[minmax(560px,1fr)_420px]" : "xl:grid-cols-1")}>
+      <div className="absolute right-0 top-0 z-10">
+        <Button
+          variant="secondary"
+          onClick={() => setResultsOpen((value) => !value)}
+          aria-expanded={resultsOpen}
+          aria-controls="analysis-result-sidebar"
+          aria-label={resultsOpen ? "Hide result panel" : "Show result panel"}
+          className="min-h-10 w-10 px-0"
+          title={resultsOpen ? "Hide result panel" : "Show result panel"}
+        >
+          {resultsOpen ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
+        </Button>
+      </div>
+      <div className="mx-auto w-full max-w-3xl space-y-4 pt-14 xl:pt-0">
         {!online ? <ErrorState title="Offline mode" description="You appear to be offline. Mock history remains visible, but analysis may not complete." /> : null}
-        <TextAnalysisEditor value={text} onChange={setText} onAnalyze={() => void runAnalysis()} loading={loading} />
+        <TextAnalysisEditor value={text} onChange={setText} onAnalyze={() => void runAnalysis()} loading={loading} result={result} />
       </div>
       {resultsOpen ? (
-        <aside id="analysis-result-sidebar" className="space-y-4 xl:sticky xl:top-6 xl:max-h-[calc(100vh-3rem)] xl:overflow-auto xl:pr-1" aria-label="Suspicion result panel">
+        <aside id="analysis-result-sidebar" className="result-scrollbar space-y-4 xl:-mr-8 xl:sticky xl:top-0 xl:max-h-screen xl:overflow-auto xl:border-l xl:border-border/70 xl:bg-white xl:px-4 xl:py-5" aria-label="Suspicion result panel">
           {loading ? <AnalysisProgress /> : null}
           {error ? <ErrorState title="Analysis could not finish" description={error} /> : null}
           {!loading && !error && result ? (
             <AnalysisResults result={result} />
           ) : !loading && !error ? (
-            <EmptyState title="Results will appear here" description="Add at least 50 characters, then run an analysis to see confidence, highlights, and model explanations." />
+            <EmptyState title="Add something to generate results" description="Paste at least 50 characters, then run an analysis to see the score, highlights, and explanations." />
           ) : null}
         </aside>
       ) : null}
