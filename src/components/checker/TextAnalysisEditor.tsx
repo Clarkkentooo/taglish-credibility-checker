@@ -12,12 +12,14 @@ export function TextAnalysisEditor({
   value,
   onChange,
   onAnalyze,
+  onLoadSample,
   loading,
   result,
 }: {
   value: string;
   onChange: (value: string) => void;
   onAnalyze: () => void;
+  onLoadSample: () => void;
   loading: boolean;
   result?: AnalysisResult | null;
 }) {
@@ -113,7 +115,7 @@ export function TextAnalysisEditor({
         <>
           <div className="relative mt-4">
             <div className="absolute right-4 top-4 z-10 flex flex-wrap justify-end gap-2">
-              <Button variant="secondary" className="min-h-9 px-3 py-1.5" onClick={() => onChange(brand.sampleText)}>
+              <Button variant="secondary" className="min-h-9 px-3 py-1.5" onClick={onLoadSample}>
                 <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
                 Load sample
               </Button>
@@ -126,6 +128,7 @@ export function TextAnalysisEditor({
               <InlineHighlightedText
                 text={value}
                 spans={result.highlightedSpans}
+                onChange={onChange}
                 className="min-h-[360px] w-full rounded-[1.5rem] border border-border bg-white p-5 pt-16 text-ink"
               />
             ) : (
@@ -160,7 +163,7 @@ export function TextAnalysisEditor({
           </div>
         </div>
       )}
-      <div id="editor-count" className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-muted">
+      <div id="editor-count" className="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-muted">
         <span>{words} words · {value.length} characters</span>
         <span id="editor-help">{tooShort ? "Add more context for a clearer estimate." : "Minimum guidance: aim for at least 50 characters."}</span>
       </div>
@@ -176,7 +179,7 @@ export function TextAnalysisEditor({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <ImageUp className="h-5 w-5 text-primary" aria-hidden="true" />
-            <p className="text-muted">Attach `.txt`, `.docx`, or image files. Document parsing and OCR are mocked for now.</p>
+            <p className="text-xs text-muted">Attach `.txt`, `.docx`, or image files. Document parsing and OCR are mocked for now.</p>
           </div>
           <input ref={fileRef} type="file" accept=".txt,.docx,image/*" className="sr-only" onChange={onFileChange} aria-label="Upload file" />
           <Button variant="secondary" className="whitespace-nowrap" onClick={() => fileRef.current?.click()}>

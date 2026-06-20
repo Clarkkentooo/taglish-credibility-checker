@@ -6,7 +6,7 @@ export function ResultAccordion({ title, description, children, defaultOpen = fa
   return (
     <Card className="p-0 shadow-none">
       <details className="group" open={defaultOpen}>
-        <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-5 py-4">
+        <summary role="button" className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-5 py-4">
           <span>
             <span className="block font-semibold">{title}</span>
             {description ? <span className="block text-sm text-muted">{description}</span> : null}

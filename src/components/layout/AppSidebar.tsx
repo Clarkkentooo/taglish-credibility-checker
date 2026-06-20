@@ -1,6 +1,6 @@
 "use client";
 
-import { PanelLeftClose } from "lucide-react";
+import { MoreHorizontal, PanelLeftClose, UserCircle2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -17,6 +17,7 @@ export function AppSidebar() {
 
   return (
     <aside className={cn("sticky top-0 hidden h-screen shrink-0 overflow-hidden border-r border-border/70 bg-white p-4 transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:block", collapsed ? "w-20" : "w-64")}>
+      <div className="flex h-full flex-col">
       <div className={cn("flex items-start gap-2", collapsed ? "justify-center" : "justify-between")}>
         {collapsed ? (
           <button
@@ -60,7 +61,7 @@ export function AppSidebar() {
               href={item.href}
               title={collapsed ? item.label : undefined}
               className={cn(
-                "flex min-h-11 items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
+                "flex min-h-10 items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
                 collapsed ? "justify-center px-0" : "gap-3 px-3",
                 active && "bg-ink text-white shadow-sm hover:bg-ink hover:text-white",
               )}
@@ -71,6 +72,22 @@ export function AppSidebar() {
           );
         })}
       </nav>
+      <Link
+        href="/dashboard/settings"
+        title={collapsed ? "Account settings" : undefined}
+        className={cn(
+          "mt-auto flex min-h-10 items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
+          collapsed ? "justify-center px-0" : "gap-3 px-3",
+          pathname === "/dashboard/settings" && "bg-ink text-white shadow-sm hover:bg-ink hover:text-white",
+        )}
+      >
+        <UserCircle2 className="h-7 w-7 shrink-0" aria-hidden="true" />
+        <span className={cn("min-w-0 flex-1 whitespace-nowrap transition-[opacity,transform,width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "w-0 translate-x-3 opacity-0" : "w-auto translate-x-0 opacity-100")}>
+          Demo reviewer
+        </span>
+        {!collapsed ? <MoreHorizontal className="h-4 w-4 shrink-0" aria-hidden="true" /> : null}
+      </Link>
+      </div>
     </aside>
   );
 }

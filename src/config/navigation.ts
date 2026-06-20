@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, Bookmark, Clock3, Home, Settings, Sparkles } from "lucide-react";
+import { BarChart3, BookOpen, Bookmark, Clock3, Home, Sparkles } from "lucide-react";
 
 export const marketingNavigation = [
   { href: "/#how-it-works", label: "How it works" },
@@ -10,9 +10,8 @@ export const appNavigation = [
   { href: "/dashboard", label: "Overview", icon: Home },
   { href: "/dashboard/checker", label: "New analysis", icon: Sparkles },
   { href: "/dashboard/history", label: "History", icon: Clock3 },
-  { href: "/dashboard/history", label: "Saved", icon: Bookmark },
+  { href: "/dashboard/saved", label: "Saved", icon: Bookmark },
   { href: "/methodology", label: "Methods", icon: BookOpen },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
 export const dashboardStats = [

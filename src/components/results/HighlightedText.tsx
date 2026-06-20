@@ -5,7 +5,7 @@ import { InlineHighlightedText } from "./InlineHighlightedText";
 
 export function HighlightedText({ text, spans }: { text: string; spans: HighlightedSpan[] }) {
   return (
-    <Card className="p-5">
+    <Card className="p-5 shadow-none">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold">Highlighted source text</h2>

@@ -4,7 +4,7 @@ import { brand } from "@/config/brand";
 
 export function ResponsibleUseNotice() {
   return (
-    <div className="rounded-[1.25rem] border border-white/70 bg-white/55 p-4 text-sm shadow-sm backdrop-blur">
+    <div className="rounded-[1.25rem] border border-border/70 bg-white p-4 text-sm">
       <div className="flex gap-3">
         <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
         <p className="text-muted">

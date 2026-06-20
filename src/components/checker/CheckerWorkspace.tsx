@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
 import { Button } from "@/components/ui/button";
 import { analyzeText } from "@/lib/api/analysis";
+import { mockAnalyses } from "@/lib/mocks/analyses";
 import { cn } from "@/lib/utils";
 import type { AnalysisResult } from "@/types/analysis";
 
@@ -19,6 +20,7 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
   const [error, setError] = useState("");
   const [online, setOnline] = useState(true);
   const [resultsOpen, setResultsOpen] = useState(true);
+  const [sampleIndex, setSampleIndex] = useState(0);
 
   useEffect(() => {
     const update = () => setOnline(navigator.onLine);
@@ -44,6 +46,16 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
     }
   }
 
+  function loadSample() {
+    const samples = mockAnalyses.slice(0, 5);
+    const sample = samples[sampleIndex % samples.length];
+    setText(sample.sourceText);
+    setResult(sample);
+    setError("");
+    setResultsOpen(true);
+    setSampleIndex((index) => index + 1);
+  }
+
   return (
     <div className={cn("relative grid gap-5", resultsOpen ? "xl:grid-cols-[minmax(560px,1fr)_420px]" : "xl:grid-cols-1")}>
       <div className="absolute right-0 top-0 z-10">
@@ -61,7 +73,7 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
       </div>
       <div className="mx-auto w-full max-w-3xl space-y-4 pt-14 xl:pt-0">
         {!online ? <ErrorState title="Offline mode" description="You appear to be offline. Mock history remains visible, but analysis may not complete." /> : null}
-        <TextAnalysisEditor value={text} onChange={setText} onAnalyze={() => void runAnalysis()} loading={loading} result={result} />
+        <TextAnalysisEditor value={text} onChange={setText} onAnalyze={() => void runAnalysis()} onLoadSample={loadSample} loading={loading} result={result} />
       </div>
       {resultsOpen ? (
         <aside id="analysis-result-sidebar" className="result-scrollbar space-y-4 xl:-mr-8 xl:sticky xl:top-0 xl:max-h-screen xl:overflow-auto xl:border-l xl:border-border/70 xl:bg-white xl:px-4 xl:py-5" aria-label="Suspicion result panel">

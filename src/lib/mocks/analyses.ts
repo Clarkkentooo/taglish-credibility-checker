@@ -42,7 +42,7 @@ function spansFor(text: string, status: AnalysisStatus): HighlightedSpan[] {
     span(text, "local election office", "political_entity", "credible", 0.68, "Mentions of official election bodies can support credibility when framed carefully."),
     span(text, "official results", "election_term", "credible", 0.64, "Election-result terms often need verification against official sources."),
     span(text, "viral thread", "linguistic_pattern", "not_credible", 0.7, "Viral-source framing can correlate with lower credibility signals."),
-    span(text, "daw", "taglish_expression", "not_credible", 0.56, "Hearsay markers like daw may indicate the claim is being relayed without direct evidence."),
+    span(text, "daw", "taglish_expression", "not_credible", 0.56, "Hearsay markers like daw can be a suspicious signal because the claim is being relayed without direct evidence."),
     span(text, "Check muna", "taglish_expression", "credible", 0.52, "Cautionary Taglish phrasing can signal verification intent."),
   ].filter((item): item is HighlightedSpan => Boolean(item));
 

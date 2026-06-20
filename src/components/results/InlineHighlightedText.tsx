@@ -6,14 +6,29 @@ import { cn } from "@/lib/utils";
 import type { HighlightedSpan } from "@/types/analysis";
 import { highlightLabel } from "./highlightLabels";
 
+function renderSuspicionText(text: string, direction: HighlightedSpan["direction"]) {
+  const parts = text.split(/(suspicious|suspicion)/gi);
+  return parts.map((part, index) =>
+    /^(suspicious|suspicion)$/i.test(part) ? (
+      <span key={`${part}-${index}`} className={cn("underline decoration-2 underline-offset-2", direction === "credible" ? "decoration-credible" : "decoration-critical")}>
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
+
 export function InlineHighlightedText({
   text,
   spans,
   className,
+  onChange,
 }: {
   text: string;
   spans: HighlightedSpan[];
   className?: string;
+  onChange?: (value: string) => void;
 }) {
   const [selected, setSelected] = useState<HighlightedSpan | null>(null);
   const [hovered, setHovered] = useState<HighlightedSpan | null>(null);
@@ -34,6 +49,13 @@ export function InlineHighlightedText({
             onMouseLeave={() => setHovered(null)}
             onFocus={() => setHovered(span)}
             onBlur={() => setHovered(null)}
+            onKeyDown={(event) => {
+              if (!onChange || (event.key !== "Backspace" && event.key !== "Delete")) return;
+              event.preventDefault();
+              setSelected(null);
+              setHovered(null);
+              onChange(`${text.slice(0, span.start)}${text.slice(span.end)}`);
+            }}
             className={cn(
               "mx-0.5 rounded-md border px-1.5 py-0.5 text-left underline decoration-2 underline-offset-4 transition-colors hover:bg-white focus-visible:outline-primary",
               span.direction === "credible"
@@ -50,19 +72,21 @@ export function InlineHighlightedText({
     );
 
     return [...built.nodes, text.slice(built.cursor)];
-  }, [spans, text]);
+  }, [onChange, spans, text]);
 
   return (
     <div className={className}>
       <div className="leading-8">{parts}</div>
       {active ? (
-        <div className="mt-4 rounded-[1.1rem] border border-border bg-white/75 p-4 text-sm" role="dialog" aria-label={`Explanation for ${active.text}`}>
-          <p className="font-semibold">{active.text}</p>
-          <p className="mt-1 text-muted">
-            {highlightLabel[active.category]} - {active.direction === "credible" ? "Reduces suspicion" : "Raises suspicion"} - Relative weight{" "}
+        <div className="mt-4 rounded-[1.1rem] border border-border bg-white/75 p-4" role="dialog" aria-label={`Explanation for ${active.text}`}>
+          <p className="text-base font-semibold">{active.text}</p>
+          <p className="mt-1 text-[13px] text-muted">
+            {highlightLabel[active.category]} - {active.direction === "credible" ? "Reduces " : "Raises "}
+            <span className={cn("underline decoration-2 underline-offset-2", active.direction === "credible" ? "decoration-credible" : "decoration-critical")}>suspicious</span>
+            {" "}signal - Relative weight{" "}
             {Math.round(active.weight * 100)}%
           </p>
-          <p className="mt-3">{active.explanation}</p>
+          <p className="mt-3 text-sm">{renderSuspicionText(active.explanation, active.direction)}</p>
         </div>
       ) : null}
     </div>

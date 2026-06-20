@@ -36,7 +36,7 @@ export function FeedbackDialog({ analysisId }: { analysisId: string }) {
   }
 
   return (
-    <div className="rounded-[1.5rem] border border-white/70 bg-white/78 p-4 shadow-sm backdrop-blur">
+    <div className="rounded-[1.5rem] border border-border/70 bg-white p-4">
       <h2 className="font-semibold">Was this result useful?</h2>
       <div className="mt-3 flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => void quickFeedback(true)}>Helpful</Button>

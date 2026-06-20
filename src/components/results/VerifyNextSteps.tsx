@@ -21,7 +21,7 @@ const steps = [
 
 export function VerifyNextSteps() {
   return (
-    <Card className="p-5">
+    <Card className="p-5 shadow-none">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold">Verify next steps</h2>

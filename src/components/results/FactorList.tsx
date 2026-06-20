@@ -18,7 +18,7 @@ const label: Record<HighlightedSpan["category"], string> = {
 
 export function FactorList({ spans }: { spans: HighlightedSpan[] }) {
   return (
-    <Card className="p-5">
+    <Card className="p-5 shadow-none">
       <h2 className="text-lg font-semibold">Key factors</h2>
       <div className="mt-4 space-y-3">
         {spans.map((span) => {
