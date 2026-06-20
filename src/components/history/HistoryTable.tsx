@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Copy, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { statusCopy } from "@/config/brand";
+import { getStatusLabel } from "@/lib/presentation";
 import { excerpt, formatDate } from "@/lib/utils";
 import type { AnalysisResult } from "@/types/analysis";
 
@@ -27,8 +27,8 @@ export function HistoryTable({ analyses, onDelete, onRename }: { analyses: Analy
                 <p className="font-semibold">{analysis.title}</p>
                 <p className="mt-1 text-muted">{excerpt(analysis.sourceText, 90)}</p>
               </td>
-              <td className="px-4 py-4">{statusCopy[analysis.status]}</td>
-              <td className="px-4 py-4">{analysis.confidence}%</td>
+              <td className="px-4 py-4">{getStatusLabel(analysis.status, analysis.confidence)}</td>
+              <td className="px-4 py-4">{analysis.confidence}% model confidence</td>
               <td className="px-4 py-4">{formatDate(analysis.createdAt)}</td>
               <td className="px-4 py-4">
                 <div className="flex flex-wrap gap-2">

@@ -3,7 +3,7 @@ const steps = ["Checking language patterns", "Comparing model predictions", "Pre
 export function AnalysisProgress() {
   return (
     <div className="rounded-xl border border-border bg-surface p-5" role="status" aria-live="polite">
-      <p className="font-semibold">Analyzing credibility signals...</p>
+      <p className="font-semibold">Analyzing misinformation-associated signals...</p>
       <ol className="mt-4 space-y-3">
         {steps.map((step, index) => (
           <li key={step} className="flex items-center gap-3 text-sm text-muted">

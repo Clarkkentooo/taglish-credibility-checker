@@ -35,7 +35,7 @@ export function MobileNavigation() {
                 const Icon = item.icon;
                 return (
                   <Link
-                    key={item.href}
+                    key={`${item.href}-${item.label}`}
                     href={item.href}
                     onClick={() => setOpen(false)}
                     className={cn(

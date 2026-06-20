@@ -4,6 +4,7 @@ import { HighlightedText } from "@/components/results/HighlightedText";
 import { ModelComparison } from "@/components/results/ModelComparison";
 import { ResponsibleUseNotice } from "@/components/results/ResponsibleUseNotice";
 import { ResultSummaryCard } from "@/components/results/ResultSummaryCard";
+import { VerifyNextSteps } from "@/components/results/VerifyNextSteps";
 import type { AnalysisResult } from "@/types/analysis";
 
 export function AnalysisResults({ result }: { result: AnalysisResult }) {
@@ -14,6 +15,7 @@ export function AnalysisResults({ result }: { result: AnalysisResult }) {
       <HighlightedText text={result.sourceText} spans={result.highlightedSpans} />
       <FactorList spans={result.highlightedSpans} />
       <ModelComparison scores={result.modelScores} />
+      <VerifyNextSteps />
       <FeedbackDialog analysisId={result.id} />
     </section>
   );

@@ -59,7 +59,7 @@ export function HighlightedText({ text, spans }: { text: string; spans: Highligh
         <div className="mt-4 rounded-xl border border-border bg-surface p-4" aria-live="polite">
           <p className="text-sm font-semibold">{active.text}</p>
           <p className="mt-1 text-sm text-muted">
-            {label[active.category]} · {active.direction === "credible" ? "Leans credible" : "Leans not credible"} · Relative weight{" "}
+            {label[active.category]} · {active.direction === "credible" ? "Reduces suspicion" : "Raises suspicion"} · Relative weight{" "}
             {Math.round(active.weight * 100)}%
           </p>
           <p className="mt-3 text-sm">{active.explanation}</p>

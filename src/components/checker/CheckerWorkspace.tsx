@@ -41,7 +41,7 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
   }
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(380px,0.9fr)]">
+    <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(390px,0.82fr)]">
       <div className="space-y-4">
         {!online ? <ErrorState title="Offline mode" description="You appear to be offline. Mock history remains visible, but analysis may not complete." /> : null}
         <TextAnalysisEditor value={text} onChange={setText} onAnalyze={() => void runAnalysis()} loading={loading} />

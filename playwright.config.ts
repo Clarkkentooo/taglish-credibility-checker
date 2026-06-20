@@ -1,16 +1,19 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const port = process.env.PLAYWRIGHT_PORT ?? "3007";
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${port}`;
+
 export default defineConfig({
   testDir: "./e2e",
   timeout: 30_000,
   use: {
-    baseURL: "http://127.0.0.1:3007",
+    baseURL,
     trace: "on-first-retry",
   },
   webServer: {
-    command: "corepack pnpm dev --port 3007 --hostname 127.0.0.1",
-    url: "http://127.0.0.1:3007",
-    reuseExistingServer: false,
+    command: `corepack pnpm dev --port ${port} --hostname 127.0.0.1`,
+    url: baseURL,
+    reuseExistingServer: Boolean(process.env.PLAYWRIGHT_BASE_URL),
     timeout: 120_000,
   },
   projects: [

@@ -2,8 +2,8 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { ButtonLink } from "@/components/ui/button";
 import { dashboardStats } from "@/config/navigation";
-import { statusCopy } from "@/config/brand";
 import { mockAnalyses } from "@/lib/mocks/analyses";
+import { getStatusLabel } from "@/lib/presentation";
 import { formatDate } from "@/lib/utils";
 
 export default function DashboardPage() {
@@ -20,7 +20,7 @@ export default function DashboardPage() {
         <div>
           <p className="text-sm font-semibold text-primary">Demo dashboard</p>
           <h1 className="mt-2 text-3xl font-bold">Welcome back.</h1>
-          <p className="mt-2 text-muted">Start a new analysis or revisit recent mock results.</p>
+          <p className="mt-2 text-muted">Start a new suspiciousness check or revisit recent mock results.</p>
         </div>
         <ButtonLink href="/dashboard/checker">New analysis</ButtonLink>
       </section>
@@ -49,7 +49,7 @@ export default function DashboardPage() {
                   <p className="font-semibold">{analysis.title}</p>
                   <p className="text-sm text-muted">{formatDate(analysis.createdAt)}</p>
                 </div>
-                <span className="text-sm font-semibold">{statusCopy[analysis.status]} · {analysis.confidence}%</span>
+                <span className="text-sm font-semibold">{getStatusLabel(analysis.status, analysis.confidence)} · signal score</span>
               </div>
             </Link>
           ))}

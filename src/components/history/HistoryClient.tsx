@@ -78,9 +78,9 @@ export function HistoryClient() {
           Result
           <select className="mt-2 min-h-11 w-full rounded-lg border border-border bg-surface px-3" value={filter} onChange={(event) => setFilter(event.target.value as Filter)}>
             <option value="all">All results</option>
-            <option value="credible">Likely credible</option>
-            <option value="not_credible">Likely not credible</option>
-            <option value="uncertain">Needs more context</option>
+            <option value="credible">Not Suspicious</option>
+            <option value="not_credible">Highly Suspicious</option>
+            <option value="uncertain">Suspicious</option>
           </select>
         </label>
         <label className="text-sm font-medium">

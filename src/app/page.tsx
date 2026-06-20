@@ -21,10 +21,10 @@ export default function LandingPage() {
           <div className="flex flex-col justify-center">
             <p className="text-sm font-semibold text-primary">{brand.tagline}</p>
             <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">Check Taglish content before you share.</h1>
-            <p className="mt-5 max-w-xl text-lg text-muted">See credibility signals, influential phrases, and model confidence in seconds. Built for calm, explainable review of election-related posts.</p>
+            <p className="mt-5 max-w-xl text-lg text-muted">See misinformation-associated signals, influential phrases, and model confidence in seconds. Built for calm, explainable review of election-related posts.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/checker">
-                Analyze credibility <ArrowRight className="ml-2 h-4 w-4" />
+                Check suspiciousness <ArrowRight className="ml-2 h-4 w-4" />
               </ButtonLink>
               <ButtonLink href="/methodology" variant="secondary">
                 View methodology
@@ -48,7 +48,7 @@ export default function LandingPage() {
                 <CheckCircle2 className="mt-1 h-5 w-5 text-credible" aria-hidden="true" />
                 <div>
                   <h2 className="font-semibold">{title}</h2>
-                  <p className="mt-1 text-sm text-muted">{text}</p>
+                <p className="mt-1 text-sm text-muted">{text}</p>
                 </div>
               </div>
             ))}
@@ -88,7 +88,7 @@ export default function LandingPage() {
           <ShieldQuestion className="mx-auto h-9 w-9 text-primary" aria-hidden="true" />
           <h2 className="mt-4 text-3xl font-bold">Use results responsibly</h2>
           <p className="mt-4 text-muted">{brand.disclaimer}</p>
-          <ButtonLink href="/checker" className="mt-8">Start a new analysis</ButtonLink>
+          <ButtonLink href="/checker" className="mt-8">Start a new check</ButtonLink>
         </section>
       </main>
       <footer className="border-t border-border px-4 py-6 text-center text-sm text-muted">{brand.name} · {brand.descriptor}</footer>

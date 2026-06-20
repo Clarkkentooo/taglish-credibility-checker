@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, ImageUp, RotateCcw, Trash2 } from "lucide-react";
+import { FileText, ImageUp, RotateCcw, Trash2, Type } from "lucide-react";
 import { type DragEvent, type ChangeEvent, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/config/brand";
@@ -19,6 +19,7 @@ export function TextAnalysisEditor({
 }) {
   const [uploadMessage, setUploadMessage] = useState("");
   const [dragging, setDragging] = useState(false);
+  const [inputMode, setInputMode] = useState<"text" | "image">("text");
   const fileRef = useRef<HTMLInputElement>(null);
   const words = useMemo(() => countWords(value), [value]);
   const tooShort = value.trim().length > 0 && value.trim().length < 50;
@@ -55,7 +56,7 @@ export function TextAnalysisEditor({
     <section className="rounded-xl border border-border bg-surface p-4 shadow-sm" aria-labelledby="editor-heading">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 id="editor-heading" className="text-2xl font-bold">Analyze Taglish content</h1>
+          <h1 id="editor-heading" className="text-2xl font-bold">Check Taglish content</h1>
           <p className="mt-1 text-sm text-muted">Paste election-related content or upload text/image material for a mock OCR-ready flow.</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -69,13 +70,56 @@ export function TextAnalysisEditor({
           </Button>
         </div>
       </div>
-      <textarea
-        aria-describedby="editor-help editor-count"
-        className="mt-4 min-h-[320px] w-full resize-y rounded-xl border border-border bg-canvas p-4 leading-7 text-ink shadow-inner transition placeholder:text-muted focus:border-primary"
-        placeholder="Paste a Taglish election-related post, caption, or thread excerpt..."
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-      />
+      <div className="mt-5 inline-flex rounded-xl border border-border bg-canvas p-1" role="tablist" aria-label="Input type">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={inputMode === "text"}
+          onClick={() => setInputMode("text")}
+          className={`inline-flex min-h-10 items-center rounded-lg px-4 text-sm font-semibold ${inputMode === "text" ? "bg-surface text-ink shadow-sm" : "text-muted"}`}
+        >
+          <Type className="mr-2 h-4 w-4" aria-hidden="true" />
+          Text
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={inputMode === "image"}
+          onClick={() => setInputMode("image")}
+          className={`inline-flex min-h-10 items-center rounded-lg px-4 text-sm font-semibold ${inputMode === "image" ? "bg-surface text-ink shadow-sm" : "text-muted"}`}
+        >
+          <ImageUp className="mr-2 h-4 w-4" aria-hidden="true" />
+          Image
+        </button>
+      </div>
+      {inputMode === "text" ? (
+        <textarea
+          aria-describedby="editor-help editor-count"
+          className="mt-4 min-h-[360px] w-full resize-y rounded-xl border border-border bg-canvas p-4 leading-7 text-ink shadow-inner transition placeholder:text-muted focus:border-primary"
+          placeholder="Paste a Taglish election-related post, caption, or thread excerpt..."
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      ) : (
+        <div
+          onDragOver={(event) => {
+            event.preventDefault();
+            setDragging(true);
+          }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={onDrop}
+          className={`mt-4 grid min-h-[360px] place-items-center rounded-xl border border-dashed p-6 text-center transition ${dragging ? "border-primary bg-primary/5" : "border-border bg-canvas"}`}
+        >
+          <div>
+            <ImageUp className="mx-auto h-9 w-9 text-primary" aria-hidden="true" />
+            <h2 className="mt-4 text-xl font-semibold">Upload an image with text</h2>
+            <p className="mx-auto mt-2 max-w-md text-sm text-muted">Drag a screenshot or social media image here. OCR is mocked for now, but the interface is ready for backend extraction.</p>
+            <Button variant="secondary" className="mt-5" onClick={() => fileRef.current?.click()}>
+              Choose image
+            </Button>
+          </div>
+        </div>
+      )}
       <div id="editor-count" className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-muted">
         <span>{words} words · {value.length} characters</span>
         <span id="editor-help">{tooShort ? "Add more context for a clearer estimate." : "Minimum guidance: aim for at least 50 characters."}</span>
@@ -92,7 +136,7 @@ export function TextAnalysisEditor({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <ImageUp className="h-5 w-5 text-primary" aria-hidden="true" />
-            <p className="text-muted">Drop `.txt`, `.docx`, or image files here. Image OCR is mocked for now.</p>
+            <p className="text-muted">Attach `.txt`, `.docx`, or image files. Document parsing and OCR are mocked for now.</p>
           </div>
           <input ref={fileRef} type="file" accept=".txt,.docx,image/*" className="sr-only" onChange={onFileChange} aria-label="Upload file" />
           <Button variant="secondary" onClick={() => fileRef.current?.click()}>
@@ -104,7 +148,7 @@ export function TextAnalysisEditor({
       </div>
       <div className="sticky bottom-0 -mx-4 mt-5 border-t border-border bg-surface p-4 sm:static sm:border-0 sm:p-0">
         <Button onClick={onAnalyze} disabled={loading || value.trim().length < 50} className="w-full sm:w-auto">
-          {loading ? "Analyzing..." : "Analyze credibility"}
+          {loading ? "Analyzing..." : "Run suspiciousness check"}
         </Button>
       </div>
     </section>

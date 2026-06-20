@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Copy, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { statusCopy } from "@/config/brand";
+import { getStatusLabel } from "@/lib/presentation";
 import { excerpt, formatDate } from "@/lib/utils";
 import type { AnalysisResult } from "@/types/analysis";
 
@@ -16,7 +16,7 @@ export function HistoryCard({ analysis, onDelete }: { analysis: AnalysisResult; 
           <h3 className="font-semibold">{analysis.title}</h3>
           <p className="mt-1 text-sm text-muted">{formatDate(analysis.createdAt)}</p>
         </div>
-        <span className="rounded-full border border-border px-2 py-1 text-xs font-medium">{statusCopy[analysis.status]}</span>
+        <span className="rounded-full border border-border px-2 py-1 text-xs font-medium">{getStatusLabel(analysis.status, analysis.confidence)}</span>
       </div>
       <p className="mt-3 text-sm text-muted">{excerpt(analysis.sourceText)}</p>
       <div className="mt-4 flex flex-wrap gap-2">

@@ -80,7 +80,7 @@ export const mockAnalyses: AnalysisResult[] = [
     confidence: 84,
     modelAgreement: 3,
     modelScores: scores.credible,
-    summary: "The text includes verification cues and references to official election information, but claims should still be checked against reliable sources.",
+    summary: "Few misinformation-associated signals were detected. This does not guarantee that the content is accurate.",
   }),
   createAnalysis({
     id: "ana-not-credible-002",
@@ -92,7 +92,7 @@ export const mockAnalyses: AnalysisResult[] = [
     confidence: 81,
     modelAgreement: 3,
     modelScores: scores.not_credible,
-    summary: "Urgent sharing language, hearsay markers, and unsupported election-result framing lean toward lower credibility.",
+    summary: "Urgent sharing language, hearsay markers, and unsupported election-result framing raise the suspiciousness score.",
   }),
   createAnalysis({
     id: "ana-uncertain-003",
@@ -103,7 +103,7 @@ export const mockAnalyses: AnalysisResult[] = [
     confidence: 58,
     modelAgreement: 1,
     modelScores: scores.uncertain,
-    summary: "The text is brief and the model signals are mixed, so more context is needed before interpreting credibility.",
+    summary: "The text is brief and the model signals are mixed, so the suspiciousness estimate needs more context.",
   }),
   createAnalysis({
     id: "ana-mixed-004",
@@ -119,7 +119,7 @@ export const mockAnalyses: AnalysisResult[] = [
       { model: "mBERT", credibleProbability: 0.52, notCredibleProbability: 0.48 },
       { model: "XLM-RoBERTa", credibleProbability: 0.38, notCredibleProbability: 0.62 },
     ],
-    summary: "Official-source references and unsupported certainty appear together, producing a mixed result.",
+    summary: "Official-source references and unsupported certainty appear together, producing a suspicious but mixed result.",
   }),
   createAnalysis({
     id: "ana-credible-005",
@@ -131,7 +131,7 @@ export const mockAnalyses: AnalysisResult[] = [
     confidence: 78,
     modelAgreement: 3,
     modelScores: scores.credible,
-    summary: "The text encourages verification and avoids declaring unsupported outcomes.",
+    summary: "Few misinformation-associated signals were detected because the text encourages verification and avoids unsupported outcomes.",
   }),
   createAnalysis({
     id: "ana-error-006",
@@ -165,9 +165,9 @@ export function buildMockAnalysis(text: string): AnalysisResult {
     modelScores: scores[status],
     summary:
       status === "credible"
-        ? "The text leans toward verification-oriented language, but the result is still only a model estimate."
+        ? "Few misinformation-associated signals were detected. This does not guarantee that the content is accurate."
         : status === "not_credible"
-          ? "The text contains urgency, hearsay, or unsupported election-result signals that lean lower credibility."
-          : "The available text is short or mixed, so the model needs more context for a clearer estimate.",
+          ? "The text contains urgency, hearsay, or unsupported election-result signals that raise suspicion."
+          : "The available text is short or mixed, so the suspiciousness estimate needs more context.",
   });
 }

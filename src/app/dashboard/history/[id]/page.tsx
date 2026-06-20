@@ -12,7 +12,7 @@ export default function SavedAnalysisPage({ params }: { params: { id: string } }
   return (
     <div className="space-y-5">
       <div>
-        <p className="text-sm font-semibold text-primary">Saved analysis</p>
+        <p className="text-sm font-semibold text-primary">Saved suspiciousness check</p>
         <h1 className="mt-2 text-3xl font-bold">{analysis.title}</h1>
       </div>
       <AnalysisResults result={analysis} />

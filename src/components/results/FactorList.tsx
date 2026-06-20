@@ -32,7 +32,7 @@ export function FactorList({ spans }: { spans: HighlightedSpan[] }) {
                 <div>
                   <h3 className="font-semibold">{span.text}</h3>
                   <p className="text-xs font-medium text-muted">
-                    {label[span.category]} · {span.direction === "credible" ? "Leans credible" : "Leans not credible"} · Impact{" "}
+                    {label[span.category]} · {span.direction === "credible" ? "Reduces suspicion" : "Raises suspicion"} · Impact{" "}
                     {Math.round(span.weight * 100)}%
                   </p>
                   <p className="mt-2 text-sm text-muted">{span.explanation}</p>

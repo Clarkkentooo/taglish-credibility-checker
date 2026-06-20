@@ -20,7 +20,7 @@ export function AppSidebar() {
           const active = pathname === item.href;
           return (
             <Link
-              key={item.href}
+              key={`${item.href}-${item.label}`}
               href={item.href}
               className={cn(
                 "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium text-muted transition hover:bg-primary/8 hover:text-ink",
