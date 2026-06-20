@@ -15,7 +15,9 @@ export function InlineHighlightedText({
   spans: HighlightedSpan[];
   className?: string;
 }) {
-  const [active, setActive] = useState<HighlightedSpan | null>(spans[0] ?? null);
+  const [selected, setSelected] = useState<HighlightedSpan | null>(null);
+  const [hovered, setHovered] = useState<HighlightedSpan | null>(null);
+  const active = hovered ?? selected;
   const parts = useMemo(() => {
     const ordered = [...spans].sort((a, b) => a.start - b.start);
     const built = ordered.reduce<{ cursor: number; nodes: ReactNode[] }>(
@@ -27,7 +29,11 @@ export function InlineHighlightedText({
           <button
             key={span.id}
             type="button"
-            onClick={() => setActive(span)}
+            onClick={() => setSelected((value) => (value?.id === span.id ? null : span))}
+            onMouseEnter={() => setHovered(span)}
+            onMouseLeave={() => setHovered(null)}
+            onFocus={() => setHovered(span)}
+            onBlur={() => setHovered(null)}
             className={cn(
               "mx-0.5 rounded-md border px-1.5 py-0.5 text-left underline decoration-2 underline-offset-4 transition-colors hover:bg-white focus-visible:outline-primary",
               span.direction === "credible"

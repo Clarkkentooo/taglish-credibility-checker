@@ -23,7 +23,7 @@ export function ResultSummaryCard({ result, variant = "default" }: { result: Ana
   const lean = presentation.level === "not_suspicious" ? "not suspicious" : presentation.level === "highly_suspicious" ? "highly suspicious" : "suspicious";
 
   return (
-    <Card className="overflow-hidden p-0 shadow-glow">
+    <Card className="overflow-hidden p-0 shadow-none">
       <div className={variant === "plain" ? "border-b border-border bg-white px-5 py-5 text-ink" : "border-b border-white/10 bg-[radial-gradient(circle_at_0%_0%,rgba(255,126,91,0.42),transparent_18rem),linear-gradient(135deg,#171321,#2a2039)] px-5 py-5 text-white"}>
         <p className={variant === "plain" ? "text-xs font-semibold uppercase tracking-[0.18em] text-muted" : "text-xs font-semibold uppercase tracking-[0.18em] text-white/65"}>Suspicion result</p>
         <div className="mt-2 flex items-end justify-between gap-4">

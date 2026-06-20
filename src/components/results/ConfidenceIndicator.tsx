@@ -14,7 +14,7 @@ export function ConfidenceIndicator({ score, tone }: { score: number; tone: Susp
         <span className="font-medium text-muted">Suspicion score</span>
         <span className="font-semibold">{score}%</span>
       </div>
-      <div className="h-3 overflow-hidden rounded-full bg-border">
+      <div className="h-1.5 overflow-hidden rounded-full bg-border">
         <div className={cn("h-full rounded-full", toneColor[tone])} style={{ width: `${score}%` }} />
       </div>
     </div>

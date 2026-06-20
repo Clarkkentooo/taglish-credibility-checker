@@ -16,7 +16,7 @@ export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside className={cn("hidden min-h-screen shrink-0 border-r border-border/70 bg-white p-4 transition-[width] duration-300 ease-out lg:block", collapsed ? "w-24" : "w-64")}>
+    <aside className={cn("sticky top-0 hidden h-screen shrink-0 overflow-hidden border-r border-border/70 bg-white p-4 transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:block", collapsed ? "w-20" : "w-64")}>
       <div className={cn("flex items-start gap-2", collapsed ? "justify-center" : "justify-between")}>
         {collapsed ? (
           <button
@@ -41,7 +41,7 @@ export function AppSidebar() {
             <Button
               variant="ghost"
               aria-label="Collapse sidebar"
-              className="min-h-10 px-3 transition-transform duration-300 ease-out hover:-translate-x-0.5"
+              className="min-h-10 px-3 transition-colors duration-300 ease-out hover:bg-canvas"
               onClick={() => setCollapsed(true)}
             >
               <PanelLeftClose className="h-4 w-4" />
@@ -60,12 +60,13 @@ export function AppSidebar() {
               href={item.href}
               title={collapsed ? item.label : undefined}
               className={cn(
-                "flex min-h-11 items-center gap-3 overflow-hidden rounded-full px-3 text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-primary/8 hover:text-ink",
+                "flex min-h-11 items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
+                collapsed ? "justify-center px-0" : "gap-3 px-3",
                 active && "bg-ink text-white shadow-sm hover:bg-ink hover:text-white",
               )}
             >
               <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-              <span className={cn("whitespace-nowrap transition-all duration-300 ease-out", collapsed ? "w-0 translate-x-2 opacity-0" : "w-auto translate-x-0 opacity-100")}>{item.label}</span>
+              <span className={cn("whitespace-nowrap transition-[opacity,transform,width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "w-0 translate-x-3 opacity-0" : "w-auto translate-x-0 opacity-100")}>{item.label}</span>
             </Link>
           );
         })}

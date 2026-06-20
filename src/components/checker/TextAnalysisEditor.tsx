@@ -88,58 +88,57 @@ export function TextAnalysisEditor({
             Image
           </button>
         </div>
-        <div className="flex flex-wrap justify-start gap-2 lg:justify-end">
-          <Button variant="secondary" onClick={() => onChange(brand.sampleText)}>
-            <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
-            Load sample
-          </Button>
-          <Button variant="ghost" onClick={() => onChange("")} disabled={!value}>
-            <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" />
-            Clear
-          </Button>
-        </div>
+        {result ? (
+          <div className="flex rounded-full border border-border bg-white p-1" aria-label="Highlight mode">
+            <button
+              type="button"
+              onClick={() => setHighlightMode("before")}
+              className={`inline-flex min-h-9 items-center rounded-full px-3 text-sm font-semibold transition-colors ${highlightMode === "before" ? "bg-ink text-white" : "text-muted hover:bg-canvas hover:text-ink"}`}
+            >
+              <EyeOff className="mr-2 h-4 w-4" aria-hidden="true" />
+              Before
+            </button>
+            <button
+              type="button"
+              onClick={() => setHighlightMode("after")}
+              className={`inline-flex min-h-9 items-center rounded-full px-3 text-sm font-semibold transition-colors ${highlightMode === "after" ? "bg-ink text-white" : "text-muted hover:bg-canvas hover:text-ink"}`}
+            >
+              <Eye className="mr-2 h-4 w-4" aria-hidden="true" />
+              After
+            </button>
+          </div>
+        ) : null}
       </div>
       {inputMode === "text" ? (
         <>
-          {result ? (
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm font-medium text-muted">Review source text</p>
-              <div className="flex rounded-full border border-border bg-white p-1" aria-label="Highlight mode">
-                <button
-                  type="button"
-                  onClick={() => setHighlightMode("before")}
-                  className={`inline-flex min-h-9 items-center rounded-full px-3 text-sm font-semibold transition-colors ${highlightMode === "before" ? "bg-ink text-white" : "text-muted hover:bg-canvas hover:text-ink"}`}
-                >
-                  <EyeOff className="mr-2 h-4 w-4" aria-hidden="true" />
-                  Before
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setHighlightMode("after")}
-                  className={`inline-flex min-h-9 items-center rounded-full px-3 text-sm font-semibold transition-colors ${highlightMode === "after" ? "bg-ink text-white" : "text-muted hover:bg-canvas hover:text-ink"}`}
-                >
-                  <Eye className="mr-2 h-4 w-4" aria-hidden="true" />
-                  After
-                </button>
-              </div>
+          <div className="relative mt-4">
+            <div className="absolute right-4 top-4 z-10 flex flex-wrap justify-end gap-2">
+              <Button variant="secondary" className="min-h-9 px-3 py-1.5" onClick={() => onChange(brand.sampleText)}>
+                <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
+                Load sample
+              </Button>
+              <Button variant="ghost" className="min-h-9 px-3 py-1.5" onClick={() => onChange("")} disabled={!value}>
+                <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" />
+                Clear
+              </Button>
             </div>
-          ) : null}
-          {result && highlightMode === "after" ? (
-            <InlineHighlightedText
-              text={value}
-              spans={result.highlightedSpans}
-              className="mt-4 min-h-[360px] w-full rounded-[1.5rem] border border-border bg-white p-5 text-ink"
-            />
-          ) : (
-            <textarea
-              aria-describedby="editor-help editor-count"
-              className="mt-4 min-h-[360px] w-full resize-y rounded-[1.5rem] border border-border bg-white p-5 leading-7 text-ink transition placeholder:text-muted focus:border-primary"
-              placeholder="Paste a Taglish election-related post, caption, or thread excerpt..."
-              value={value}
-              onChange={(event) => onChange(event.target.value)}
-              readOnly={Boolean(result && highlightMode === "before")}
-            />
-          )}
+            {result && highlightMode === "after" ? (
+              <InlineHighlightedText
+                text={value}
+                spans={result.highlightedSpans}
+                className="min-h-[360px] w-full rounded-[1.5rem] border border-border bg-white p-5 pt-16 text-ink"
+              />
+            ) : (
+              <textarea
+                aria-describedby="editor-help editor-count"
+                className="min-h-[360px] w-full resize-y rounded-[1.5rem] border border-border bg-white p-5 pt-16 leading-7 text-ink transition placeholder:text-muted focus:border-primary"
+                placeholder="Paste a Taglish election-related post, caption, or thread excerpt..."
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                readOnly={Boolean(result && highlightMode === "before")}
+              />
+            )}
+          </div>
         </>
       ) : (
         <div
@@ -180,7 +179,7 @@ export function TextAnalysisEditor({
             <p className="text-muted">Attach `.txt`, `.docx`, or image files. Document parsing and OCR are mocked for now.</p>
           </div>
           <input ref={fileRef} type="file" accept=".txt,.docx,image/*" className="sr-only" onChange={onFileChange} aria-label="Upload file" />
-          <Button variant="secondary" onClick={() => fileRef.current?.click()}>
+          <Button variant="secondary" className="whitespace-nowrap" onClick={() => fileRef.current?.click()}>
             <FileText className="mr-2 h-4 w-4" aria-hidden="true" />
             Upload file
           </Button>

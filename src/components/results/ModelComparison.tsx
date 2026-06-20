@@ -25,7 +25,7 @@ export function ModelComparison({ scores }: { scores: ModelScore[] }) {
                 <span className="font-medium">{score.model}</span>
                 <span className="text-muted">{Math.round(score.notCredibleProbability * 100)}% suspicious</span>
               </div>
-              <div className="flex h-3 overflow-hidden rounded-full bg-border" aria-hidden="true">
+              <div className="flex h-1.5 overflow-hidden rounded-full bg-border" aria-hidden="true">
                 <div className="bg-credible" style={{ width: `${score.credibleProbability * 100}%` }} />
                 <div className="bg-critical" style={{ width: `${score.notCredibleProbability * 100}%` }} />
               </div>
