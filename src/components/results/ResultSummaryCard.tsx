@@ -48,14 +48,24 @@ export function ResultSummaryCard({ result, variant = "default" }: { result: Ana
   return (
     <Card className="overflow-hidden bg-white p-0 shadow-none backdrop-blur-0">
       <div className={variant === "plain" ? "border-b border-border bg-white px-5 py-5 text-ink" : `relative min-h-28 overflow-hidden border-b px-5 py-4 ${headerClass[presentation.level]}`}>
-        <div className="relative z-10 grid min-h-20 grid-cols-[minmax(0,1fr)_150px] items-center gap-2">
+        <div className="relative z-10 grid min-h-20 grid-cols-[minmax(0,1fr)_168px] items-center gap-2">
           <div className="min-w-0">
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Suspicion result</p>
             <h2 className="mt-2 text-[27px] font-black leading-[0.98] tracking-[0.015em]">{presentation.label}</h2>
           </div>
           <div className="relative h-24 min-w-0">
             <span className="absolute left-0 top-1/2 z-10 -translate-y-1/2 whitespace-nowrap text-xs font-semibold leading-none text-ink">{presentation.score}% score</span>
-            {variant === "plain" ? null : <Image src={illustration.src} alt={illustration.alt} width={176} height={144} className="absolute bottom-[-10px] right-[-10px] h-36 w-36 object-contain object-right-bottom" />}
+            {variant === "plain" ? null : (
+              <span className="absolute right-0 top-1/2 h-24 w-[92px] -translate-y-1/2 overflow-hidden" aria-hidden="true">
+                <Image
+                  src={illustration.src}
+                  alt={illustration.alt}
+                  width={176}
+                  height={144}
+                  className="absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 scale-125 object-contain object-center"
+                />
+              </span>
+            )}
           </div>
         </div>
       </div>
