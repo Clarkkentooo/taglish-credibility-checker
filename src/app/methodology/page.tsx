@@ -33,7 +33,7 @@ export default function MethodologyPage() {
       <MarketingHeader />
       <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         <p className="text-sm font-semibold text-primary">Methodology</p>
-        <h1 className="mt-3 text-4xl font-bold">Plain-language model explanation</h1>
+        <h1 className="mt-3 text-5xl font-black tracking-[-0.04em]">Plain-language model explanation</h1>
         <p className="mt-4 max-w-3xl text-lg text-muted">
           {brand.name} is designed as a screening interface for a Taglish credibility-classification research workflow. The frontend currently uses realistic mock data.
         </p>
@@ -49,12 +49,12 @@ export default function MethodologyPage() {
             );
           })}
         </div>
-        <section className="mt-10 rounded-xl border border-border bg-surface p-6">
+        <section className="mt-10 rounded-[1.75rem] border border-white/70 bg-white/70 p-6 shadow-sm backdrop-blur">
           <h2 className="text-2xl font-semibold">How the estimate should be read</h2>
           <div className="mt-5 grid gap-4 md:grid-cols-3">
             {["Input text", "Model comparison", "Influential phrases"].map((step, index) => (
-              <div key={step} className="rounded-xl bg-canvas p-4">
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 font-semibold text-primary">{index + 1}</span>
+              <div key={step} className="rounded-[1.25rem] bg-white/55 p-4">
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-ink font-semibold text-white">{index + 1}</span>
                 <h3 className="mt-4 font-semibold">{step}</h3>
                 <p className="mt-2 text-sm text-muted">
                   {index === 0
@@ -67,7 +67,7 @@ export default function MethodologyPage() {
             ))}
           </div>
         </section>
-        <section className="mt-10 rounded-xl border border-caution/30 bg-caution/10 p-6">
+        <section className="mt-10 rounded-[1.75rem] border border-caution/25 bg-white/65 p-6 shadow-glow backdrop-blur">
           <h2 className="text-2xl font-semibold">Limitations</h2>
           <p className="mt-3 text-muted">
             Correlation or model influence is not proof of factual causation. False positives and false negatives are possible, especially with short text, satire, rapidly changing election information, or missing context. Human verification and reliable sources remain necessary.

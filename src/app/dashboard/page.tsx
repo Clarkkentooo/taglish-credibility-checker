@@ -16,10 +16,10 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-6 shadow-sm md:flex-row md:items-center md:justify-between">
+      <section className="flex flex-col gap-4 rounded-[1.75rem] border border-white/70 bg-white/78 p-6 shadow-soft backdrop-blur-xl md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-sm font-semibold text-primary">Demo dashboard</p>
-          <h1 className="mt-2 text-3xl font-bold">Welcome back.</h1>
+          <h1 className="mt-2 text-4xl font-black tracking-[-0.04em]">Welcome back.</h1>
           <p className="mt-2 text-muted">Start a new suspiciousness check or revisit recent mock results.</p>
         </div>
         <ButtonLink href="/dashboard/checker">New analysis</ButtonLink>
@@ -43,7 +43,7 @@ export default function DashboardPage() {
         </div>
         <div className="grid gap-3">
           {mockAnalyses.slice(0, 4).map((analysis) => (
-            <Link key={analysis.id} href={`/dashboard/history/${analysis.id}`} className="rounded-xl border border-border bg-surface p-4 transition hover:border-primary/40">
+            <Link key={analysis.id} href={`/dashboard/history/${analysis.id}`} className="rounded-[1.25rem] border border-white/70 bg-white/68 p-4 shadow-sm transition hover:bg-white/90">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="font-semibold">{analysis.title}</p>

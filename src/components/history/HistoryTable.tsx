@@ -9,9 +9,9 @@ import type { AnalysisResult } from "@/types/analysis";
 
 export function HistoryTable({ analyses, onDelete, onRename }: { analyses: AnalysisResult[]; onDelete: (id: string) => void; onRename: (id: string) => void }) {
   return (
-    <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
+    <div className="hidden overflow-x-auto rounded-[1.5rem] border border-white/70 bg-white/70 shadow-sm backdrop-blur md:block">
       <table className="w-full min-w-[780px] text-left text-sm">
-        <thead className="bg-canvas text-xs uppercase tracking-wide text-muted">
+        <thead className="bg-white/45 text-xs uppercase tracking-wide text-muted">
           <tr>
             <th className="px-4 py-3">Analysis</th>
             <th className="px-4 py-3">Result</th>

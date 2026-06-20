@@ -31,7 +31,7 @@ export function ModelComparison({ scores }: { scores: ModelScore[] }) {
               </div>
             </div>
           ))}
-          <p className="rounded-lg bg-canvas p-3 text-sm text-muted">
+          <p className="rounded-[1rem] bg-white/55 p-3 text-sm text-muted">
             These probabilities come from the demo model contract. They should be compared with reliable sources and human judgment.
           </p>
         </div>

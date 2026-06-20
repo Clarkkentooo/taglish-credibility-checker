@@ -24,9 +24,9 @@ export function FactorList({ spans }: { spans: HighlightedSpan[] }) {
         {spans.map((span) => {
           const Icon = iconMap[span.category];
           return (
-            <article key={span.id} className="rounded-xl border border-border p-4">
+            <article key={span.id} className="rounded-[1.25rem] border border-white/80 bg-white/45 p-4">
               <div className="flex items-start gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
                   <Icon className="h-4 w-4" aria-hidden="true" />
                 </span>
                 <div>

@@ -36,7 +36,7 @@ export function FeedbackDialog({ analysisId }: { analysisId: string }) {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-surface p-4">
+    <div className="rounded-[1.5rem] border border-white/70 bg-white/78 p-4 shadow-sm backdrop-blur">
       <h2 className="font-semibold">Was this result useful?</h2>
       <div className="mt-3 flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => void quickFeedback(true)}>Helpful</Button>
@@ -46,7 +46,7 @@ export function FeedbackDialog({ analysisId }: { analysisId: string }) {
       {message ? <p className="mt-3 text-sm text-credible" role="status">{message}</p> : null}
       {open ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-ink/40 p-4" role="dialog" aria-modal="true" aria-labelledby="feedback-title">
-          <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md rounded-xl bg-surface p-5 shadow-soft">
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md rounded-[1.5rem] bg-white/95 p-5 shadow-soft backdrop-blur">
             <h3 id="feedback-title" className="text-lg font-semibold">Report an incorrect result</h3>
             <label className="mt-4 block text-sm font-medium" htmlFor="correctedLabel">Optional corrected label</label>
             <select id="correctedLabel" className="mt-2 min-h-11 w-full rounded-lg border border-border bg-surface px-3" {...register("correctedLabel")}>

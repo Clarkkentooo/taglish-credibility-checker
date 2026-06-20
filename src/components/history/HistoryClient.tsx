@@ -72,11 +72,11 @@ export function HistoryClient() {
       <Card className="grid gap-3 p-4 md:grid-cols-[1fr_180px_180px_160px]">
         <label className="text-sm font-medium">
           Search
-          <input className="mt-2 min-h-11 w-full rounded-lg border border-border bg-surface px-3" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search title or excerpt" />
+          <input className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search title or excerpt" />
         </label>
         <label className="text-sm font-medium">
           Result
-          <select className="mt-2 min-h-11 w-full rounded-lg border border-border bg-surface px-3" value={filter} onChange={(event) => setFilter(event.target.value as Filter)}>
+          <select className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" value={filter} onChange={(event) => setFilter(event.target.value as Filter)}>
             <option value="all">All results</option>
             <option value="credible">Not Suspicious</option>
             <option value="not_credible">Highly Suspicious</option>
@@ -85,7 +85,7 @@ export function HistoryClient() {
         </label>
         <label className="text-sm font-medium">
           Date
-          <select className="mt-2 min-h-11 w-full rounded-lg border border-border bg-surface px-3" aria-label="Date filter">
+          <select className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" aria-label="Date filter">
             <option>Any date</option>
             <option>Past 7 days</option>
             <option>Past 30 days</option>
@@ -93,7 +93,7 @@ export function HistoryClient() {
         </label>
         <label className="text-sm font-medium">
           Sort
-          <select className="mt-2 min-h-11 w-full rounded-lg border border-border bg-surface px-3" value={sort} onChange={(event) => setSort(event.target.value as Sort)}>
+          <select className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" value={sort} onChange={(event) => setSort(event.target.value as Sort)}>
             <option value="newest">Newest</option>
             <option value="oldest">Oldest</option>
             <option value="confidence">Confidence</option>

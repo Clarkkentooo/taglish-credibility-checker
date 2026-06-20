@@ -12,7 +12,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-3xl font-bold">Settings</h1>
+        <h1 className="text-4xl font-black tracking-[-0.04em]">Settings</h1>
         <p className="mt-2 text-muted">Profile, appearance, language, and demo data controls.</p>
       </div>
       <Card className="p-5">
@@ -23,11 +23,11 @@ export default function SettingsPage() {
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <label className="text-sm font-medium">
             Display name
-            <input className="mt-2 min-h-11 w-full rounded-lg border border-border bg-surface px-3" defaultValue="Demo reviewer" />
+            <input className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" defaultValue="Demo reviewer" />
           </label>
           <label className="text-sm font-medium">
             Email
-            <input className="mt-2 min-h-11 w-full rounded-lg border border-border bg-surface px-3" defaultValue="demo@tsek.local" />
+            <input className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" defaultValue="demo@tsek.local" />
           </label>
         </div>
       </Card>
@@ -35,7 +35,7 @@ export default function SettingsPage() {
         <h2 className="text-xl font-semibold">Appearance</h2>
         <label className="mt-4 block text-sm font-medium">
           Theme preference
-          <select className="mt-2 min-h-11 w-full rounded-lg border border-border bg-surface px-3 md:w-72" value={theme} onChange={(event) => setTheme(event.target.value)}>
+          <select className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4 md:w-72" value={theme} onChange={(event) => setTheme(event.target.value)}>
             <option value="system">System</option>
             <option value="light">Light</option>
             <option value="dark">Dark ready</option>

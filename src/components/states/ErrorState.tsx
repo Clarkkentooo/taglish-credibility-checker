@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 
 export function ErrorState({ title, description }: { title: string; description: string }) {
   return (
-    <Card className="border-critical/30 bg-critical/5 p-5" role="alert">
+    <Card className="border-critical/25 bg-white/75 p-5" role="alert">
       <div className="flex gap-3">
         <AlertTriangle className="mt-0.5 h-5 w-5 text-critical" aria-hidden="true" />
         <div>

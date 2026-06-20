@@ -14,13 +14,13 @@ const valueItems = [
 
 export default function LandingPage() {
   return (
-    <div>
+    <div className="overflow-hidden">
       <MarketingHeader />
       <main>
-        <section className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+        <section className="relative mx-auto grid max-w-7xl gap-8 bg-white px-4 pb-16 pt-10 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:px-8 lg:pt-16">
           <div className="flex flex-col justify-center">
-            <p className="text-sm font-semibold text-primary">{brand.tagline}</p>
-            <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">Check Taglish content before you share.</h1>
+            <p className="w-fit rounded-full border border-white/70 bg-white/70 px-4 py-2 text-sm font-semibold text-primary shadow-sm backdrop-blur">{brand.tagline}</p>
+            <h1 className="mt-5 max-w-2xl text-5xl font-black leading-[0.95] tracking-[-0.04em] sm:text-6xl lg:text-7xl">Check Taglish content before you share.</h1>
             <p className="mt-5 max-w-xl text-lg text-muted">See misinformation-associated signals, influential phrases, and model confidence in seconds. Built for calm, explainable review of election-related posts.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/checker">
@@ -31,17 +31,17 @@ export default function LandingPage() {
               </ButtonLink>
             </div>
           </div>
-          <Card className="p-4 shadow-soft">
-            <div className="rounded-xl border border-border bg-canvas p-4">
+          <Card className="relative rotate-[-1deg] p-3 shadow-glow">
+            <div className="rounded-[1.25rem] border border-white/70 bg-white/65 p-4">
               <p className="text-sm font-semibold">Checker preview</p>
-              <p className="mt-3 rounded-lg bg-surface p-4 text-sm leading-7 text-muted">{brand.sampleText}</p>
+              <p className="mt-3 rounded-[1rem] bg-white/75 p-4 text-sm leading-7 text-muted shadow-inner">{brand.sampleText}</p>
             </div>
             <div className="mt-4">
               <AnalysisResults result={mockAnalyses[0]} />
             </div>
           </Card>
         </section>
-        <section className="border-y border-border bg-surface">
+        <section className="border-y border-white/70 bg-white/45 backdrop-blur">
           <div className="mx-auto grid max-w-7xl gap-4 px-4 py-8 sm:px-6 md:grid-cols-3 lg:px-8">
             {valueItems.map(([title, text]) => (
               <div key={title} className="flex gap-3">
@@ -70,7 +70,7 @@ export default function LandingPage() {
             ))}
           </div>
         </section>
-        <section className="bg-surface">
+        <section className="bg-white/35 backdrop-blur">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 lg:grid-cols-3 lg:px-8">
             {[
               ["Everyday users", "Check a post, caption, or thread excerpt before sharing it."],

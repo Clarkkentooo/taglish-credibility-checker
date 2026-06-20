@@ -53,13 +53,13 @@ export function TextAnalysisEditor({
   }
 
   return (
-    <section className="rounded-xl border border-border bg-surface p-4 shadow-sm" aria-labelledby="editor-heading">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <section className="rounded-[1.75rem] border border-white/70 bg-white/78 p-5 shadow-soft backdrop-blur-xl" aria-labelledby="editor-heading">
+      <div className="flex flex-col items-center gap-3 text-center">
         <div>
-          <h1 id="editor-heading" className="text-2xl font-bold">Check Taglish content</h1>
+          <h1 id="editor-heading" className="text-3xl font-black tracking-[-0.03em]">Check Taglish content</h1>
           <p className="mt-1 text-sm text-muted">Paste election-related content or upload text/image material for a mock OCR-ready flow.</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
           <Button variant="secondary" onClick={() => onChange(brand.sampleText)}>
             <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
             Load sample
@@ -70,13 +70,13 @@ export function TextAnalysisEditor({
           </Button>
         </div>
       </div>
-      <div className="mt-5 inline-flex rounded-xl border border-border bg-canvas p-1" role="tablist" aria-label="Input type">
+      <div className="mx-auto mt-5 flex w-fit rounded-full border border-white/80 bg-white/55 p-1 shadow-inner" role="tablist" aria-label="Input type">
         <button
           type="button"
           role="tab"
           aria-selected={inputMode === "text"}
           onClick={() => setInputMode("text")}
-          className={`inline-flex min-h-10 items-center rounded-lg px-4 text-sm font-semibold ${inputMode === "text" ? "bg-surface text-ink shadow-sm" : "text-muted"}`}
+          className={`inline-flex min-h-10 items-center rounded-full px-4 text-sm font-semibold ${inputMode === "text" ? "bg-ink text-white shadow-sm" : "text-muted"}`}
         >
           <Type className="mr-2 h-4 w-4" aria-hidden="true" />
           Text
@@ -86,7 +86,7 @@ export function TextAnalysisEditor({
           role="tab"
           aria-selected={inputMode === "image"}
           onClick={() => setInputMode("image")}
-          className={`inline-flex min-h-10 items-center rounded-lg px-4 text-sm font-semibold ${inputMode === "image" ? "bg-surface text-ink shadow-sm" : "text-muted"}`}
+          className={`inline-flex min-h-10 items-center rounded-full px-4 text-sm font-semibold ${inputMode === "image" ? "bg-ink text-white shadow-sm" : "text-muted"}`}
         >
           <ImageUp className="mr-2 h-4 w-4" aria-hidden="true" />
           Image
@@ -95,7 +95,7 @@ export function TextAnalysisEditor({
       {inputMode === "text" ? (
         <textarea
           aria-describedby="editor-help editor-count"
-          className="mt-4 min-h-[360px] w-full resize-y rounded-xl border border-border bg-canvas p-4 leading-7 text-ink shadow-inner transition placeholder:text-muted focus:border-primary"
+          className="mt-4 min-h-[360px] w-full resize-y rounded-[1.5rem] border border-white/80 bg-white/60 p-5 leading-7 text-ink shadow-inner backdrop-blur transition placeholder:text-muted focus:border-primary"
           placeholder="Paste a Taglish election-related post, caption, or thread excerpt..."
           value={value}
           onChange={(event) => onChange(event.target.value)}
@@ -108,7 +108,7 @@ export function TextAnalysisEditor({
           }}
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
-          className={`mt-4 grid min-h-[360px] place-items-center rounded-xl border border-dashed p-6 text-center transition ${dragging ? "border-primary bg-primary/5" : "border-border bg-canvas"}`}
+          className={`mt-4 grid min-h-[360px] place-items-center rounded-[1.5rem] border border-dashed p-6 text-center transition ${dragging ? "border-primary bg-white/70" : "border-white/80 bg-white/45"}`}
         >
           <div>
             <ImageUp className="mx-auto h-9 w-9 text-primary" aria-hidden="true" />
@@ -131,7 +131,7 @@ export function TextAnalysisEditor({
         }}
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
-        className={`mt-4 rounded-xl border border-dashed p-4 text-sm transition ${dragging ? "border-primary bg-primary/5" : "border-border bg-canvas"}`}
+        className={`mt-4 rounded-[1.25rem] border border-dashed p-4 text-sm transition ${dragging ? "border-primary bg-white/70" : "border-white/80 bg-white/45"}`}
       >
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -146,7 +146,7 @@ export function TextAnalysisEditor({
         </div>
         {uploadMessage ? <p className="mt-3 text-sm text-primary" role="status">{uploadMessage}</p> : null}
       </div>
-      <div className="sticky bottom-0 -mx-4 mt-5 border-t border-border bg-surface p-4 sm:static sm:border-0 sm:p-0">
+      <div className="sticky bottom-0 -mx-5 mt-5 border-t border-white/70 bg-white/85 p-5 backdrop-blur sm:static sm:border-0 sm:bg-transparent sm:p-0">
         <Button onClick={onAnalyze} disabled={loading || value.trim().length < 50} className="w-full sm:w-auto">
           {loading ? "Analyzing..." : "Run suspiciousness check"}
         </Button>

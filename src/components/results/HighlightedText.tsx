@@ -54,9 +54,9 @@ export function HighlightedText({ text, spans }: { text: string; spans: Highligh
         </div>
         <HighlightLegend />
       </div>
-      <div className="mt-5 rounded-xl border border-border bg-canvas p-4 leading-8">{parts}</div>
+      <div className="mt-5 rounded-[1.25rem] border border-white/80 bg-white/55 p-4 leading-8 shadow-inner">{parts}</div>
       {active ? (
-        <div className="mt-4 rounded-xl border border-border bg-surface p-4" aria-live="polite">
+        <div className="mt-4 rounded-[1.25rem] border border-white/80 bg-white/70 p-4 shadow-sm" aria-live="polite">
           <p className="text-sm font-semibold">{active.text}</p>
           <p className="mt-1 text-sm text-muted">
             {label[active.category]} · {active.direction === "credible" ? "Reduces suspicion" : "Raises suspicion"} · Relative weight{" "}

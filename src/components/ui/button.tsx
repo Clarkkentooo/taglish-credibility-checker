@@ -5,10 +5,10 @@ import { cn } from "@/lib/utils";
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-white shadow-sm hover:bg-primary/90",
-  secondary: "border border-border bg-surface text-ink hover:bg-primary/5",
-  ghost: "text-ink hover:bg-primary/8",
-  danger: "border border-critical/30 bg-critical/10 text-critical hover:bg-critical/15",
+  primary: "bg-ink text-white shadow-glow hover:bg-ink/90",
+  secondary: "border border-white/70 bg-white/70 text-ink shadow-sm backdrop-blur hover:bg-white",
+  ghost: "text-ink hover:bg-white/60",
+  danger: "border border-critical/25 bg-critical/10 text-critical hover:bg-critical/15",
 };
 
 export function Button({
@@ -19,7 +19,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex min-h-11 items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
+        "inline-flex min-h-11 items-center justify-center rounded-full px-5 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
         variants[variant],
         className,
       )}
@@ -37,7 +37,7 @@ export function ButtonLink({
   return (
     <Link
       className={cn(
-        "inline-flex min-h-11 items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition",
+        "inline-flex min-h-11 items-center justify-center rounded-full px-5 py-2 text-sm font-semibold transition",
         variants[variant],
         className,
       )}

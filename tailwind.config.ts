@@ -18,9 +18,11 @@ const config: Config = {
       },
       boxShadow: {
         soft: "0 18px 50px rgb(20 32 51 / 0.08)",
+        glow: "0 24px 80px rgb(255 128 98 / 0.22)",
       },
       fontFamily: {
-        sans: ["Inter", "Geist", "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: ["IBM Plex Serif", "Georgia", "ui-serif", "serif"],
+        display: ["Instrument Serif", "Georgia", "ui-serif", "serif"],
       },
     },
   },

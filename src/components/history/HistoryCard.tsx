@@ -16,7 +16,7 @@ export function HistoryCard({ analysis, onDelete }: { analysis: AnalysisResult; 
           <h3 className="font-semibold">{analysis.title}</h3>
           <p className="mt-1 text-sm text-muted">{formatDate(analysis.createdAt)}</p>
         </div>
-        <span className="rounded-full border border-border px-2 py-1 text-xs font-medium">{getStatusLabel(analysis.status, analysis.confidence)}</span>
+        <span className="rounded-full border border-white/80 bg-white/55 px-2 py-1 text-xs font-medium">{getStatusLabel(analysis.status, analysis.confidence)}</span>
       </div>
       <p className="mt-3 text-sm text-muted">{excerpt(analysis.sourceText)}</p>
       <div className="mt-4 flex flex-wrap gap-2">

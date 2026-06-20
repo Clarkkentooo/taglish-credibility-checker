@@ -33,8 +33,8 @@ export function VerifyNextSteps() {
         {steps.map((step) => {
           const Icon = step.icon;
           return (
-            <div key={step.title} className="flex gap-3 rounded-xl border border-border bg-canvas p-3">
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-caution/10 text-caution">
+            <div key={step.title} className="flex gap-3 rounded-[1.1rem] border border-white/80 bg-white/50 p-3">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-caution/10 text-caution">
                 <Icon className="h-4 w-4" aria-hidden="true" />
               </span>
               <div>
