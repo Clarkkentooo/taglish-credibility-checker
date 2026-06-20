@@ -1,12 +1,13 @@
 "use client";
 
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { PanelLeftClose } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { brand } from "@/config/brand";
 import { appNavigation } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 
@@ -16,16 +17,37 @@ export function AppSidebar() {
 
   return (
     <aside className={cn("hidden min-h-screen shrink-0 border-r border-white/70 bg-white/72 p-4 backdrop-blur-xl transition-all lg:block", collapsed ? "w-24" : "w-64")}>
-      <div className="flex items-start justify-between gap-2">
-        <BrandLogo href="/dashboard" compact={collapsed} />
-        <Button
-          variant="ghost"
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="min-h-10 px-3"
-          onClick={() => setCollapsed((value) => !value)}
-        >
-          {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
-        </Button>
+      <div className={cn("flex items-start gap-2", collapsed ? "justify-center" : "justify-between")}>
+        {collapsed ? (
+          <button
+            type="button"
+            aria-label="Expand sidebar"
+            className="rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+            onClick={() => setCollapsed(false)}
+          >
+            <span
+              className="block h-9 w-9 bg-ink shadow-glow"
+              aria-hidden="true"
+              style={{
+                WebkitMask: "url(/main-logo.svg) center / contain no-repeat",
+                mask: "url(/main-logo.svg) center / contain no-repeat",
+              }}
+            />
+            <span className="sr-only">{brand.name}</span>
+          </button>
+        ) : (
+          <>
+            <BrandLogo href="/dashboard" />
+            <Button
+              variant="ghost"
+              aria-label="Collapse sidebar"
+              className="min-h-10 px-3"
+              onClick={() => setCollapsed(true)}
+            >
+              <PanelLeftClose className="h-4 w-4" />
+            </Button>
+          </>
+        )}
       </div>
       {!collapsed ? <Badge className="mt-5">Mock mode · Demo data</Badge> : null}
       <nav className="mt-6 space-y-1" aria-label="Dashboard navigation">

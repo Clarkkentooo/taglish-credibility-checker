@@ -21,8 +21,8 @@ const config: Config = {
         glow: "0 24px 80px rgb(255 128 98 / 0.22)",
       },
       fontFamily: {
-        sans: ["IBM Plex Serif", "Georgia", "ui-serif", "serif"],
-        display: ["Instrument Serif", "Georgia", "ui-serif", "serif"],
+        sans: ["var(--font-body)", "Georgia", "ui-serif", "serif"],
+        display: ["var(--font-display)", "Georgia", "ui-serif", "serif"],
       },
     },
   },
