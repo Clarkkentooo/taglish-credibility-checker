@@ -46,6 +46,7 @@ h2,
 h3,
 .font-display {
   font-family: var(--font-display), Georgia, ui-serif, serif;
+  letter-spacing: 0.015em;
 }
 
 button,

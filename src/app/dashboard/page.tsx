@@ -19,7 +19,7 @@ export default function DashboardPage() {
       <section className="flex flex-col gap-4 rounded-[1.75rem] border border-white/70 bg-white/78 p-6 shadow-soft backdrop-blur-xl md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-sm font-semibold text-primary">Demo dashboard</p>
-          <h1 className="mt-2 text-4xl font-black tracking-[-0.04em]">Welcome back.</h1>
+          <h1 className="mt-2 text-4xl font-black tracking-[0.015em]">Welcome back.</h1>
           <p className="mt-2 text-muted">Start a new suspiciousness check or revisit recent mock results.</p>
         </div>
         <ButtonLink href="/dashboard/checker">New analysis</ButtonLink>

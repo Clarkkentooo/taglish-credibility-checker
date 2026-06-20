@@ -15,9 +15,8 @@ export function BrandLogo({ href = "/", compact = false }: { href?: string; comp
       {compact ? (
         <span className="sr-only">{brand.name}</span>
       ) : (
-        <span>
-          <span className="block font-display text-2xl leading-5 tracking-tight">{brand.name}</span>
-          <span className="block text-[9px] leading-3 text-muted">{brand.descriptor}</span>
+        <span className="flex items-center">
+          <span className="block font-display text-2xl font-semibold leading-none tracking-[0.015em]">{brand.name}</span>
         </span>
       )}
     </Link>

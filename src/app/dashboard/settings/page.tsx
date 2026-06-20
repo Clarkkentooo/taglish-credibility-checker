@@ -12,7 +12,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-4xl font-black tracking-[-0.04em]">Settings</h1>
+        <h1 className="text-4xl font-black tracking-[0.015em]">Settings</h1>
         <p className="mt-2 text-muted">Profile, appearance, language, and demo data controls.</p>
       </div>
       <Card className="p-5">

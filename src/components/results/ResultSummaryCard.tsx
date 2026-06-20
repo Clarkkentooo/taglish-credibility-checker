@@ -17,18 +17,18 @@ const toneClass: Record<SuspicionPresentation["tone"], string> = {
   severe: "text-critical bg-critical/10",
 };
 
-export function ResultSummaryCard({ result }: { result: AnalysisResult }) {
+export function ResultSummaryCard({ result, variant = "default" }: { result: AnalysisResult; variant?: "default" | "plain" }) {
   const presentation = getSuspicionPresentation(result);
   const Icon = iconMap[presentation.tone];
   const lean = presentation.level === "not_suspicious" ? "not suspicious" : presentation.level === "highly_suspicious" ? "highly suspicious" : "suspicious";
 
   return (
     <Card className="overflow-hidden p-0 shadow-glow">
-      <div className="border-b border-white/10 bg-[radial-gradient(circle_at_0%_0%,rgba(255,126,91,0.42),transparent_18rem),linear-gradient(135deg,#171321,#2a2039)] px-5 py-5 text-white">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/65">Suspicion result</p>
+      <div className={variant === "plain" ? "border-b border-border bg-white px-5 py-5 text-ink" : "border-b border-white/10 bg-[radial-gradient(circle_at_0%_0%,rgba(255,126,91,0.42),transparent_18rem),linear-gradient(135deg,#171321,#2a2039)] px-5 py-5 text-white"}>
+        <p className={variant === "plain" ? "text-xs font-semibold uppercase tracking-[0.18em] text-muted" : "text-xs font-semibold uppercase tracking-[0.18em] text-white/65"}>Suspicion result</p>
         <div className="mt-2 flex items-end justify-between gap-4">
-          <h2 className="text-3xl font-black tracking-[-0.04em]">{presentation.label}</h2>
-          <span className="rounded-full bg-white/10 px-3 py-1 text-sm font-semibold">{presentation.score}% score</span>
+          <h2 className="text-3xl font-black tracking-[0.015em]">{presentation.label}</h2>
+          <span className={variant === "plain" ? "rounded-full bg-canvas px-3 py-1 text-sm font-semibold text-ink" : "rounded-full bg-white/10 px-3 py-1 text-sm font-semibold"}>{presentation.score}% score</span>
         </div>
       </div>
       <div className="p-5">

@@ -7,10 +7,10 @@ import { ResultSummaryCard } from "@/components/results/ResultSummaryCard";
 import { VerifyNextSteps } from "@/components/results/VerifyNextSteps";
 import type { AnalysisResult } from "@/types/analysis";
 
-export function AnalysisResults({ result }: { result: AnalysisResult }) {
+export function AnalysisResults({ result, summaryVariant = "default" }: { result: AnalysisResult; summaryVariant?: "default" | "plain" }) {
   return (
     <section className="space-y-4" aria-label="Analysis results">
-      <ResultSummaryCard result={result} />
+      <ResultSummaryCard result={result} variant={summaryVariant} />
       <ResponsibleUseNotice />
       <HighlightedText text={result.sourceText} spans={result.highlightedSpans} />
       <FactorList spans={result.highlightedSpans} />

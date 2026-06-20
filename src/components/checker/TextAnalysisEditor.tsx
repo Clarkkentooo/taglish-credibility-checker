@@ -56,7 +56,7 @@ export function TextAnalysisEditor({
     <section className="rounded-[1.75rem] border border-white/70 bg-white/78 p-5 shadow-soft backdrop-blur-xl" aria-labelledby="editor-heading">
       <div className="flex flex-col items-center gap-3 text-center">
         <div>
-          <h1 id="editor-heading" className="text-3xl font-black tracking-[-0.03em]">Check Taglish content</h1>
+          <h1 id="editor-heading" className="text-3xl font-black tracking-[0.015em]">Check Taglish content</h1>
           <p className="mt-1 text-sm text-muted">Paste election-related content or upload text/image material for a mock OCR-ready flow.</p>
         </div>
         <div className="flex flex-wrap justify-center gap-2">
@@ -146,8 +146,8 @@ export function TextAnalysisEditor({
         </div>
         {uploadMessage ? <p className="mt-3 text-sm text-primary" role="status">{uploadMessage}</p> : null}
       </div>
-      <div className="sticky bottom-0 -mx-5 mt-5 border-t border-white/70 bg-white/85 p-5 backdrop-blur sm:static sm:border-0 sm:bg-transparent sm:p-0">
-        <Button onClick={onAnalyze} disabled={loading || value.trim().length < 50} className="w-full sm:w-auto">
+      <div className="mt-5 flex justify-center">
+        <Button onClick={onAnalyze} disabled={loading || value.trim().length < 50} className="w-full sm:w-auto sm:min-w-56">
           {loading ? "Analyzing..." : "Run suspiciousness check"}
         </Button>
       </div>

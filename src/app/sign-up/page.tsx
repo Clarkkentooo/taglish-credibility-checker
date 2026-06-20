@@ -8,7 +8,7 @@ export default function SignUpPage() {
     <main className="grid min-h-screen place-items-center px-4 py-10">
       <Card className="w-full max-w-md p-6 shadow-glow">
         <BrandLogo />
-        <h1 className="mt-8 text-3xl font-black tracking-[-0.04em]">Create a demo account</h1>
+        <h1 className="mt-8 text-3xl font-black tracking-[0.015em]">Create a demo account</h1>
         <p className="mt-2 text-sm text-muted">Saved analyses are mocked until backend authentication is connected.</p>
         <form className="mt-6 space-y-4">
           <label className="block text-sm font-medium">

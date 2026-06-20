@@ -20,7 +20,7 @@ export default function LandingPage() {
         <section className="relative mx-auto grid max-w-7xl gap-8 bg-white px-4 pb-16 pt-10 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:px-8 lg:pt-16">
           <div className="flex flex-col justify-center">
             <p className="w-fit rounded-full border border-white/70 bg-white/70 px-4 py-2 text-sm font-semibold text-primary shadow-sm backdrop-blur">{brand.tagline}</p>
-            <h1 className="mt-5 max-w-2xl text-5xl font-black leading-[0.95] tracking-[-0.04em] sm:text-6xl lg:text-7xl">Check Taglish content before you share.</h1>
+            <h1 className="mt-5 max-w-2xl text-5xl font-black leading-[0.95] tracking-[0.015em] sm:text-6xl lg:text-7xl">Check Taglish content before you share.</h1>
             <p className="mt-5 max-w-xl text-lg text-muted">See misinformation-associated signals, influential phrases, and model confidence in seconds. Built for calm, explainable review of election-related posts.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/checker">
@@ -31,13 +31,13 @@ export default function LandingPage() {
               </ButtonLink>
             </div>
           </div>
-          <Card className="relative rotate-[-1deg] p-3 shadow-glow">
+          <Card className="relative rotate-[-1deg] p-3 shadow-soft">
             <div className="rounded-[1.25rem] border border-white/70 bg-white/65 p-4">
               <p className="text-sm font-semibold">Checker preview</p>
               <p className="mt-3 rounded-[1rem] bg-white/75 p-4 text-sm leading-7 text-muted shadow-inner">{brand.sampleText}</p>
             </div>
             <div className="mt-4">
-              <AnalysisResults result={mockAnalyses[0]} />
+              <AnalysisResults result={mockAnalyses[0]} summaryVariant="plain" />
             </div>
           </Card>
         </section>

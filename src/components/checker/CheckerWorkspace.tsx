@@ -45,8 +45,8 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
   }
 
   return (
-    <div className={cn("grid gap-5", resultsOpen ? "xl:grid-cols-[minmax(0,1fr)_minmax(390px,0.82fr)]" : "xl:grid-cols-1")}>
-      <div className="space-y-4">
+    <div className={cn("grid gap-5", resultsOpen ? "xl:grid-cols-[minmax(560px,1fr)_420px]" : "xl:grid-cols-1")}>
+      <div className="mx-auto w-full max-w-3xl space-y-4">
         <div className="flex justify-end">
           <Button variant="secondary" onClick={() => setResultsOpen((value) => !value)} aria-expanded={resultsOpen} aria-controls="analysis-result-sidebar">
             {resultsOpen ? <PanelRightClose className="mr-2 h-4 w-4" /> : <PanelRightOpen className="mr-2 h-4 w-4" />}

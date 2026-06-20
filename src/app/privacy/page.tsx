@@ -7,7 +7,7 @@ export default function PrivacyPage() {
       <MarketingHeader />
       <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
         <p className="text-sm font-semibold text-primary">Privacy</p>
-        <h1 className="mt-3 text-5xl font-black tracking-[-0.04em]">Privacy placeholder</h1>
+        <h1 className="mt-3 text-5xl font-black tracking-[0.015em]">Privacy placeholder</h1>
         <Card className="mt-8 p-6">
           <p className="text-muted">
             This frontend is currently in mock mode. Text, uploaded-file states, feedback, and history are demo interactions and are not connected to a production backend from this interface.
