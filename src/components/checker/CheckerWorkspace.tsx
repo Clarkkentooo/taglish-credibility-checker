@@ -76,7 +76,7 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
         <TextAnalysisEditor value={text} onChange={setText} onAnalyze={() => void runAnalysis()} onLoadSample={loadSample} loading={loading} result={result} />
       </div>
       {resultsOpen ? (
-        <aside id="analysis-result-sidebar" className="result-scrollbar space-y-4 xl:-my-6 xl:-mr-8 xl:sticky xl:top-0 xl:max-h-screen xl:overflow-auto xl:border-l xl:border-border/70 xl:bg-white xl:px-4 xl:py-5" aria-label="Suspicion result panel">
+        <aside id="analysis-result-sidebar" className="result-scrollbar space-y-4 xl:-my-6 xl:-mr-8 xl:sticky xl:top-0 xl:h-[calc(100vh+3rem)] xl:overflow-auto xl:border-l xl:border-border/70 xl:bg-white xl:px-4 xl:py-5" aria-label="Suspicion result panel">
           {loading ? <AnalysisProgress /> : null}
           {error ? <ErrorState title="Analysis could not finish" description={error} /> : null}
           {!loading && !error && result ? (

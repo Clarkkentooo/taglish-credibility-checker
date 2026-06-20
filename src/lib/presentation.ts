@@ -4,7 +4,7 @@ export type SuspicionLevel = "not_suspicious" | "suspicious" | "highly_suspiciou
 
 export interface SuspicionPresentation {
   level: SuspicionLevel;
-  label: "Not Suspicious" | "Suspicious" | "Highly Suspicious";
+  label: "Not Suspicious" | "Likely Suspicious" | "Suspicious";
   score: number;
   tone: "calm" | "warning" | "severe";
   interpretation: string;
@@ -26,7 +26,7 @@ export function getSuspicionPresentation(result: Pick<AnalysisResult, "status" |
   if (result.status === "not_credible" && result.confidence >= 80) {
     return {
       level: "highly_suspicious",
-      label: "Highly Suspicious",
+      label: "Suspicious",
       score: result.confidence,
       tone: "severe",
       interpretation:
@@ -36,7 +36,7 @@ export function getSuspicionPresentation(result: Pick<AnalysisResult, "status" |
 
   return {
     level: "suspicious",
-    label: "Suspicious",
+    label: "Likely Suspicious",
     score: result.confidence,
     tone: "warning",
     interpretation:

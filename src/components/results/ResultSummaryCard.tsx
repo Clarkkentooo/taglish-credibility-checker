@@ -1,4 +1,5 @@
 import { AlertTriangle, SearchCheck, ShieldQuestion } from "lucide-react";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { getSuspicionPresentation, type SuspicionPresentation } from "@/lib/presentation";
 import { formatDate } from "@/lib/utils";
@@ -17,18 +18,45 @@ const toneClass: Record<SuspicionPresentation["tone"], string> = {
   severe: "text-critical bg-critical/10",
 };
 
+const headerClass: Record<SuspicionPresentation["level"], string> = {
+  not_suspicious: "border-credible/15 bg-gradient-to-r from-[#d7ecff] via-[#eef7ff] to-white text-ink",
+  suspicious: "border-caution/20 bg-gradient-to-r from-[#ffe69a] via-[#fff4ce] to-white text-ink",
+  highly_suspicious: "border-critical/20 bg-gradient-to-r from-[#ffd6d8] via-[#ffebec] to-white text-ink",
+};
+
+const illustrationMap: Record<SuspicionPresentation["level"], { src: string; alt: string }> = {
+  not_suspicious: {
+    src: "/result-illustrations/not-suspicious.svg",
+    alt: "Not suspicious result illustration",
+  },
+  suspicious: {
+    src: "/result-illustrations/likely-suspicious.svg",
+    alt: "Likely suspicious result illustration",
+  },
+  highly_suspicious: {
+    src: "/result-illustrations/suspicious.svg",
+    alt: "Suspicious result illustration",
+  },
+};
+
 export function ResultSummaryCard({ result, variant = "default" }: { result: AnalysisResult; variant?: "default" | "plain" }) {
   const presentation = getSuspicionPresentation(result);
   const Icon = iconMap[presentation.tone];
-  const lean = presentation.level === "not_suspicious" ? "not suspicious" : presentation.level === "highly_suspicious" ? "highly suspicious" : "suspicious";
+  const illustration = illustrationMap[presentation.level];
+  const lean = presentation.level === "not_suspicious" ? "not suspicious" : presentation.level === "highly_suspicious" ? "suspicious" : "likely suspicious";
 
   return (
-    <Card className="overflow-hidden p-0 shadow-none">
-      <div className={variant === "plain" ? "border-b border-border bg-white px-5 py-5 text-ink" : "border-b border-white/10 bg-[radial-gradient(circle_at_0%_0%,rgba(255,126,91,0.42),transparent_18rem),linear-gradient(135deg,#171321,#2a2039)] px-5 py-5 text-white"}>
-        <p className={variant === "plain" ? "text-xs font-semibold uppercase tracking-[0.18em] text-muted" : "text-xs font-semibold uppercase tracking-[0.18em] text-white/65"}>Suspicion result</p>
-        <div className="mt-2 flex items-end justify-between gap-4">
-          <h2 className="text-3xl font-black tracking-[0.015em]">{presentation.label}</h2>
-          <span className={variant === "plain" ? "rounded-full bg-canvas px-3 py-1 text-sm font-semibold text-ink" : "rounded-full bg-white/10 px-3 py-1 text-sm font-semibold"}>{presentation.score}% score</span>
+    <Card className="overflow-hidden bg-white p-0 shadow-none backdrop-blur-0">
+      <div className={variant === "plain" ? "border-b border-border bg-white px-5 py-5 text-ink" : `relative min-h-28 overflow-hidden border-b px-5 py-4 ${headerClass[presentation.level]}`}>
+        <div className="relative z-10 grid grid-cols-[minmax(0,1fr)_190px] items-center gap-3">
+          <div className="min-w-0">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Suspicion result</p>
+            <h2 className="mt-2 text-3xl font-black tracking-[0.015em]">{presentation.label}</h2>
+          </div>
+          <div className="flex items-center justify-start pr-28">
+            <span className="whitespace-nowrap text-sm font-semibold text-ink">{presentation.score}% score</span>
+            {variant === "plain" ? null : <Image src={illustration.src} alt={illustration.alt} width={144} height={120} className="absolute bottom-0 right-0 h-28 w-32 object-contain object-right-bottom" />}
+          </div>
         </div>
       </div>
       <div className="p-5">
