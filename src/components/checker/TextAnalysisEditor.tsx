@@ -35,11 +35,16 @@ export function TextAnalysisEditor({
     const isImage = file.type.startsWith("image/");
     const isTxt = file.name.endsWith(".txt");
     const isDocx = file.name.endsWith(".docx");
-    if (!isImage && !isTxt && !isDocx) {
-      setUploadMessage("Unsupported file. Use .txt, .docx, or an image.");
+    if (inputMode === "image" && isImage) {
+      setUploadMessage("Image received. OCR is mocked in this frontend demo.");
+      onChange(`${brand.sampleText}\n\n[Mocked content extracted from ${file.name}]`);
       return;
     }
-    setUploadMessage(isImage ? "Image received. OCR is mocked in this frontend demo." : "Document received. Parser is mocked in this frontend demo.");
+    if (!isTxt && !isDocx) {
+      setUploadMessage("Unsupported file. Use .txt or .docx.");
+      return;
+    }
+    setUploadMessage("Document received. Parser is mocked in this frontend demo.");
     if (isTxt) {
       void file.text().then((content) => onChange(content));
       return;
@@ -179,9 +184,9 @@ export function TextAnalysisEditor({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <ImageUp className="h-5 w-5 text-primary" aria-hidden="true" />
-            <p className="text-xs text-muted">Attach `.txt`, `.docx`, or image files. Document parsing and OCR are mocked for now.</p>
+            <p className="text-xs text-muted">Attach `.txt` or `.docx` files. Document parsing is mocked for now.</p>
           </div>
-          <input ref={fileRef} type="file" accept=".txt,.docx,image/*" className="sr-only" onChange={onFileChange} aria-label="Upload file" />
+          <input ref={fileRef} type="file" accept={inputMode === "image" ? "image/*" : ".txt,.docx"} className="sr-only" onChange={onFileChange} aria-label="Upload file" />
           <Button variant="secondary" className="whitespace-nowrap" onClick={() => fileRef.current?.click()}>
             <FileText className="mr-2 h-4 w-4" aria-hidden="true" />
             Upload file
