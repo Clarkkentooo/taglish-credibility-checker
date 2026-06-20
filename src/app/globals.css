@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-ink: 20 32 51;
+  --color-canvas: 247 249 252;
+  --color-surface: 255 255 255;
+  --color-primary: 66 87 214;
+  --color-credible: 20 138 122;
+  --color-caution: 174 100 6;
+  --color-critical: 201 80 95;
+  --color-muted: 92 105 124;
+  --color-border: 218 224 235;
+}
+
+.dark {
+  --color-ink: 240 244 249;
+  --color-canvas: 11 17 28;
+  --color-surface: 18 27 42;
+  --color-primary: 139 152 255;
+  --color-credible: 73 201 181;
+  --color-caution: 244 176 79;
+  --color-critical: 245 132 145;
+  --color-muted: 166 176 192;
+  --color-border: 47 60 80;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: rgb(var(--color-canvas));
+  color: rgb(var(--color-ink));
+  font-family: Inter, Geist, ui-sans-serif, system-ui, sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgb(var(--color-primary) / 0.18);
+}
+
+:focus-visible {
+  outline: 3px solid rgb(var(--color-primary) / 0.5);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
