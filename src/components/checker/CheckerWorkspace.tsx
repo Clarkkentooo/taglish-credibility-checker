@@ -21,6 +21,7 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
   const [online, setOnline] = useState(true);
   const [resultsOpen, setResultsOpen] = useState(true);
   const [sampleIndex, setSampleIndex] = useState(0);
+  const [pendingSample, setPendingSample] = useState<AnalysisResult | null>(null);
 
   useEffect(() => {
     const update = () => setOnline(navigator.onLine);
@@ -37,8 +38,12 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
     setError("");
     setLoading(true);
     try {
-      const next = await analyzeText(text);
+      const matchingSample = pendingSample && pendingSample.sourceText === text ? pendingSample : null;
+      const next = matchingSample
+        ? await new Promise<AnalysisResult>((resolve) => window.setTimeout(() => resolve(matchingSample), 650))
+        : await analyzeText(text);
       setResult(next);
+      setPendingSample(null);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Analysis failed.");
     } finally {
@@ -50,6 +55,7 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
     const samples = mockAnalyses.slice(0, 5);
     const sample = samples[sampleIndex % samples.length];
     setText(sample.sourceText);
+    setPendingSample(sample);
     setResult(null);
     setError("");
     setResultsOpen(true);
@@ -73,7 +79,17 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
       </div>
       <div className="mx-auto w-full max-w-3xl space-y-4 pt-14 xl:pt-0">
         {!online ? <ErrorState title="Offline mode" description="You appear to be offline. Mock history remains visible, but analysis may not complete." /> : null}
-        <TextAnalysisEditor value={text} onChange={setText} onAnalyze={() => void runAnalysis()} onLoadSample={loadSample} loading={loading} result={result} />
+        <TextAnalysisEditor
+          value={text}
+          onChange={(nextText) => {
+            setText(nextText);
+            setPendingSample(null);
+          }}
+          onAnalyze={() => void runAnalysis()}
+          onLoadSample={loadSample}
+          loading={loading}
+          result={result}
+        />
       </div>
       {resultsOpen ? (
         <aside id="analysis-result-sidebar" className="result-scrollbar space-y-4 xl:-my-6 xl:-mr-8 xl:sticky xl:top-0 xl:h-[calc(100vh+3rem)] xl:overflow-auto xl:border-l xl:border-border/70 xl:bg-white xl:px-4 xl:py-5" aria-label="Suspicion result panel">
