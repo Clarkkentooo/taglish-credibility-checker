@@ -14,6 +14,7 @@ export function TextAnalysisEditor({
   onAnalyze,
   onImageAnalyze,
   onLoadSample,
+  onClear,
   loading,
   result,
 }: {
@@ -22,6 +23,7 @@ export function TextAnalysisEditor({
   onAnalyze: () => void;
   onImageAnalyze: (base64Image: string, mimeType: string) => void;
   onLoadSample: () => void;
+  onClear: () => void;
   loading: boolean;
   result?: AnalysisResult | null;
 }) {
@@ -134,7 +136,7 @@ export function TextAnalysisEditor({
                 <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
                 Load sample
               </Button>
-              <Button variant="ghost" className="min-h-9 px-3 py-1.5" onClick={() => onChange("")} disabled={!value}>
+              <Button variant="ghost" className="min-h-9 px-3 py-1.5" onClick={onClear} disabled={!value && !result}>
                 <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" />
                 Clear
               </Button>
@@ -153,6 +155,11 @@ export function TextAnalysisEditor({
                 placeholder="Paste a Taglish election-related post, caption, or thread excerpt..."
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
+                onPaste={(event) => {
+                  event.preventDefault();
+                  const plain = event.clipboardData.getData("text/plain");
+                  onChange(plain);
+                }}
                 readOnly={Boolean(result && highlightMode === "before")}
               />
             )}

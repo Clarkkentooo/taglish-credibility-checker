@@ -102,6 +102,7 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
           onAnalyze={() => void runAnalysis()}
           onImageAnalyze={(base64Image, mimeType) => void runImageAnalysis(base64Image, mimeType)}
           onLoadSample={loadSample}
+          onClear={() => { setText(""); setResult(null); setError(""); }}
           loading={loading}
           result={result}
         />
