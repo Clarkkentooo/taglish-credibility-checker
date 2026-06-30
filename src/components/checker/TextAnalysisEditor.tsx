@@ -12,18 +12,14 @@ export function TextAnalysisEditor({
   value,
   onChange,
   onAnalyze,
-  onImageAnalyze,
   onLoadSample,
-  onClear,
   loading,
   result,
 }: {
   value: string;
   onChange: (value: string) => void;
   onAnalyze: () => void;
-  onImageAnalyze: (base64Image: string, mimeType: string) => void;
   onLoadSample: () => void;
-  onClear: () => void;
   loading: boolean;
   result?: AnalysisResult | null;
 }) {
@@ -40,16 +36,8 @@ export function TextAnalysisEditor({
     const isTxt = file.name.endsWith(".txt");
     const isDocx = file.name.endsWith(".docx");
     if (inputMode === "image" && isImage) {
-      setUploadMessage(`Reading ${file.name}…`);
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = reader.result as string;
-        // dataUrl = "data:<mimeType>;base64,<data>"
-        const base64 = dataUrl.split(",")[1] ?? "";
-        onImageAnalyze(base64, file.type);
-        setUploadMessage("");
-      };
-      reader.readAsDataURL(file);
+      setUploadMessage("Image received. OCR is mocked in this frontend demo.");
+      onChange(`${brand.sampleText}\n\n[Mocked content extracted from ${file.name}]`);
       return;
     }
     if (!isTxt && !isDocx) {
@@ -136,7 +124,7 @@ export function TextAnalysisEditor({
                 <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
                 Load sample
               </Button>
-              <Button variant="ghost" className="min-h-9 px-3 py-1.5" onClick={onClear} disabled={!value && !result}>
+              <Button variant="ghost" className="min-h-9 px-3 py-1.5" onClick={() => onChange("")} disabled={!value}>
                 <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" />
                 Clear
               </Button>
@@ -155,11 +143,6 @@ export function TextAnalysisEditor({
                 placeholder="Paste a Taglish election-related post, caption, or thread excerpt..."
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
-                onPaste={(event) => {
-                  event.preventDefault();
-                  const plain = event.clipboardData.getData("text/plain");
-                  onChange(plain);
-                }}
                 readOnly={Boolean(result && highlightMode === "before")}
               />
             )}
@@ -178,11 +161,10 @@ export function TextAnalysisEditor({
           <div>
             <ImageUp className="mx-auto h-9 w-9 text-primary" aria-hidden="true" />
             <h2 className="mt-4 text-xl font-semibold">Upload an image with text</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm text-muted">Drag a screenshot or social media image here. The text will be extracted and analyzed automatically.</p>
-            <Button variant="secondary" className="mt-5" onClick={() => fileRef.current?.click()} disabled={loading}>
-              {loading ? "Analyzing…" : "Choose image"}
+            <p className="mx-auto mt-2 max-w-md text-sm text-muted">Drag a screenshot or social media image here. OCR is mocked for now, but the interface is ready for backend extraction.</p>
+            <Button variant="secondary" className="mt-5" onClick={() => fileRef.current?.click()}>
+              Choose image
             </Button>
-            {uploadMessage ? <p className="mt-3 text-sm text-primary" role="status">{uploadMessage}</p> : null}
           </div>
         </div>
       )}

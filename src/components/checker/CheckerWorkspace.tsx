@@ -8,7 +8,7 @@ import { AnalysisResults } from "@/components/results/AnalysisResults";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
 import { Button } from "@/components/ui/button";
-import { analyzeText, analyzeImage } from "@/lib/api/analysis";
+import { analyzeText } from "@/lib/api/analysis";
 import { mockAnalyses } from "@/lib/mocks/analyses";
 import { cn } from "@/lib/utils";
 import type { AnalysisResult } from "@/types/analysis";
@@ -51,20 +51,6 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
     }
   }
 
-  async function runImageAnalysis(base64Image: string, mimeType: string) {
-    setError("");
-    setLoading(true);
-    try {
-      const next = await analyzeImage(base64Image, mimeType);
-      setText(next.extractedText);
-      setResult(next);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Image analysis failed.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   function loadSample() {
     const samples = mockAnalyses.slice(0, 5);
     const sample = samples[sampleIndex % samples.length];
@@ -100,9 +86,7 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
             setPendingSample(null);
           }}
           onAnalyze={() => void runAnalysis()}
-          onImageAnalyze={(base64Image, mimeType) => void runImageAnalysis(base64Image, mimeType)}
           onLoadSample={loadSample}
-          onClear={() => { setText(""); setResult(null); setError(""); }}
           loading={loading}
           result={result}
         />
