@@ -12,7 +12,7 @@ TsekTxt: A Web-Based Taglish Credibility Checker for Filipino Social Media Conte
 
 ## Introduction
 
-TsekTxt is a web-based Taglish credibility checker developed as a capstone project for the BS Data Science program at Adamson University. The system allows Filipino users to submit Taglish social media text or upload screenshots and receive a real-time credibility classification — Not Suspicious or Suspicious — powered by a fine-tuned XLM-RoBERTa model (chimsio/tsektxt-xlmr) served via a local Flask API. The Groq API with LLaMA 3.3 (70B Versatile) independently assesses credibility signals and generates human-readable explanations and token highlights. For image uploads, the Groq vision model (llama-4-scout-17b) extracts text via OCR before classification. This test plan provides a structured framework for validating the system's features, usability, and performance before final submission.
+TsekTxt is a web-based Taglish credibility checker developed as a capstone project for the BS Data Science program at Adamson University. The system allows Filipino users to submit Taglish social media text or upload screenshots and receive a real-time credibility classification — Not Suspicious or Suspicious — powered by a fine-tuned XLM-RoBERTa model (chimsio/tsektxt-xlmr) served via a local FastAPI backend. The Groq API with LLaMA 3.3 (70B Versatile) independently assesses credibility signals and generates human-readable explanations and token highlights. For image uploads, the Groq vision model (llama-4-scout-17b) extracts text via OCR before classification. This test plan provides a structured framework for validating the system's features, usability, and performance before final submission.
 
 ---
 
@@ -25,7 +25,7 @@ TsekTxt is a web-based Taglish credibility checker developed as a capstone proje
 - History page (past analysis log)
 - Dashboard
 - Navigation and routing between pages
-- Flask API inference endpoint (`http://localhost:5000/analyze`)
+- FastAPI backend inference endpoint (`http://localhost:8000/analyze`)
 - Next.js API route for text analysis (`/api/analyze`)
 - Next.js API route for image analysis (`/api/analyze-image`)
 
@@ -151,5 +151,5 @@ Testing will be suspended when a critical defect is discovered that blocks the c
 |---|---|---|
 | CEO / Project Lead | Nuñezca, Christian Dysar | Overall project oversight and quality assurance. Test evaluation report review and sign-off. |
 | CFO / COO | Fernandez, Samantha Nicole | Test plan documentation and management. Test results tracking and reporting. Coordinate testing schedule. |
-| CTO | Arca, Hans Jio | Test the Flask API backend and model inference. Test the Groq API image-to-text pipeline. Performance and API response time testing. Defect diagnosis and resolution. |
+| CTO | Arca, Hans Jio | Test the FastAPI backend and model inference. Test the Groq API image-to-text pipeline. Performance and API response time testing. Defect diagnosis and resolution. |
 | CMO | Amba, Clark | Test UI/UX design and layout. Test navigation, responsiveness, and button functionality. Test the results display panel. |
