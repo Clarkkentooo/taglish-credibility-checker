@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { HighlightedSpan } from "@/types/analysis";
@@ -30,9 +30,25 @@ export function InlineHighlightedText({
   className?: string;
   onChange?: (value: string) => void;
 }) {
-  const [selected, setSelected] = useState<HighlightedSpan | null>(null);
-  const [hovered, setHovered] = useState<HighlightedSpan | null>(null);
-  const active = hovered ?? selected;
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [pinnedId, setPinnedId] = useState<string | null>(null);
+  const hoverCloseTimer = useRef<number | null>(null);
+  const explanationId = useId();
+  const activeSpan = useMemo(
+    () => spans.find((span) => span.id === (hoveredId ?? pinnedId)) ?? null,
+    [hoveredId, pinnedId, spans],
+  );
+
+  const cancelHoverClose = useCallback(() => {
+    if (hoverCloseTimer.current) window.clearTimeout(hoverCloseTimer.current);
+    hoverCloseTimer.current = null;
+  }, []);
+
+  const scheduleHoverClose = useCallback(() => {
+    cancelHoverClose();
+    hoverCloseTimer.current = window.setTimeout(() => setHoveredId(null), 120);
+  }, [cancelHoverClose]);
+
   const parts = useMemo(() => {
     const ordered = [...spans].sort((a, b) => a.start - b.start);
     const built = ordered.reduce<{ cursor: number; nodes: ReactNode[] }>(
@@ -44,16 +60,24 @@ export function InlineHighlightedText({
           <button
             key={span.id}
             type="button"
-            onClick={() => setSelected((value) => (value?.id === span.id ? null : span))}
-            onMouseEnter={() => setHovered(span)}
-            onMouseLeave={() => setHovered(null)}
-            onFocus={() => setHovered(span)}
-            onBlur={() => setHovered(null)}
+            aria-pressed={pinnedId === span.id}
+            aria-describedby={activeSpan?.id === span.id ? explanationId : undefined}
+            onClick={() => setPinnedId((current) => (current === span.id ? null : span.id))}
+            onMouseEnter={() => {
+              cancelHoverClose();
+              setHoveredId(span.id);
+            }}
+            onMouseLeave={scheduleHoverClose}
+            onFocus={() => {
+              cancelHoverClose();
+              setHoveredId(span.id);
+            }}
+            onBlur={scheduleHoverClose}
             onKeyDown={(event) => {
               if (!onChange || (event.key !== "Backspace" && event.key !== "Delete")) return;
               event.preventDefault();
-              setSelected(null);
-              setHovered(null);
+              setPinnedId(null);
+              setHoveredId(null);
               onChange(`${text.slice(0, span.start)}${text.slice(span.end)}`);
             }}
             className={cn(
@@ -61,6 +85,7 @@ export function InlineHighlightedText({
               span.direction === "credible"
                 ? "border-credible/35 bg-credible/10 decoration-credible"
                 : "border-critical/35 bg-critical/10 decoration-critical",
+              (pinnedId === span.id || hoveredId === span.id) && "bg-white ring-1 ring-primary/30",
             )}
             aria-label={`${span.text}, ${highlightLabel[span.category]}, ${Math.round(span.weight * 100)} percent relative weight`}
           >
@@ -72,21 +97,45 @@ export function InlineHighlightedText({
     );
 
     return [...built.nodes, text.slice(built.cursor)];
-  }, [onChange, spans, text]);
+  }, [activeSpan?.id, cancelHoverClose, explanationId, hoveredId, onChange, pinnedId, scheduleHoverClose, spans, text]);
 
   return (
-    <div className={className}>
-      <div className="leading-8">{parts}</div>
-      {active ? (
-        <div className="mt-4 rounded-[1.1rem] border border-border bg-white/75 p-4" role="dialog" aria-label={`Explanation for ${active.text}`}>
-          <p className="text-base font-semibold">{active.text}</p>
-          <p className="mt-1 text-[13px] text-muted">
-            {highlightLabel[active.category]} - {active.direction === "credible" ? "Reduces " : "Raises "}
-            <span className={cn("underline decoration-2 underline-offset-2", active.direction === "credible" ? "decoration-credible" : "decoration-critical")}>suspicious</span>
-            {" "}signal - Relative weight{" "}
-            {Math.round(active.weight * 100)}%
-          </p>
-          <p className="mt-3 text-sm">{renderSuspicionText(active.explanation, active.direction)}</p>
+    <div className={cn("w-full text-left", className)}>
+      <div className="w-full leading-8">{parts}</div>
+      {activeSpan ? (
+        <div
+          id={explanationId}
+          data-highlight-explanation-card=""
+          role="status"
+          onMouseEnter={cancelHoverClose}
+          onMouseLeave={scheduleHoverClose}
+          onFocus={cancelHoverClose}
+          onBlur={scheduleHoverClose}
+          className={cn(
+            "mt-4 w-full rounded-[1rem] border bg-white/80 p-4 text-left shadow-none",
+            activeSpan.direction === "credible" ? "border-credible/25" : "border-critical/25",
+          )}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-base font-semibold">{activeSpan.text}</p>
+              <p className="mt-1 text-[13px] text-muted">
+                {highlightLabel[activeSpan.category]} - {activeSpan.direction === "credible" ? "Reduces " : "Raises "}
+                <span className={cn("underline decoration-2 underline-offset-2", activeSpan.direction === "credible" ? "decoration-credible" : "decoration-critical")}>suspicious</span>
+                {" "}signal - Relative weight {Math.round(activeSpan.weight * 100)}%
+              </p>
+            </div>
+            {pinnedId === activeSpan.id ? (
+              <button
+                type="button"
+                className="shrink-0 rounded-full px-2 py-1 text-xs font-semibold text-muted transition-colors hover:bg-canvas hover:text-ink focus-visible:outline-primary"
+                onClick={() => setPinnedId(null)}
+              >
+                Close
+              </button>
+            ) : null}
+          </div>
+          <p className="mt-3 text-sm">{renderSuspicionText(activeSpan.explanation, activeSpan.direction)}</p>
         </div>
       ) : null}
     </div>

@@ -17,12 +17,12 @@ export default function LandingPage() {
     <div className="overflow-hidden">
       <MarketingHeader />
       <main>
-        <section className="relative mx-auto grid max-w-7xl gap-8 bg-white px-4 pb-16 pt-6 sm:px-6 lg:min-h-[calc(100vh-5rem)] lg:grid-cols-[0.92fr_1.08fr] lg:items-start lg:px-8 lg:pt-10">
+        <section className="relative mx-auto grid max-w-7xl gap-8 bg-white px-4 pb-12 pt-4 sm:px-6 lg:min-h-[calc(100vh-5rem)] lg:grid-cols-[0.92fr_1.08fr] lg:items-start lg:px-8 lg:pt-10">
           <div className="flex flex-col justify-start lg:pt-10">
             <p className="w-fit rounded-full border border-white/70 bg-white/70 px-4 py-2 text-sm font-semibold text-primary shadow-sm backdrop-blur">{brand.tagline}</p>
-            <h1 className="mt-5 max-w-2xl text-5xl font-black leading-[0.95] tracking-[0.015em] sm:text-6xl lg:text-7xl">Check Taglish content before you share.</h1>
-            <p className="mt-5 max-w-xl text-lg text-muted">See misinformation-associated signals, influential phrases, and model confidence in seconds. Built for calm, explainable review of election-related posts.</p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <h1 className="mt-5 max-w-2xl text-4xl font-black leading-[0.95] tracking-[0.015em] sm:text-6xl lg:text-7xl">Check Taglish content before you share.</h1>
+            <p className="mt-5 max-w-xl text-base text-muted sm:text-lg">See misinformation-associated signals, influential phrases, and model confidence in seconds. Built for calm, explainable review of election-related posts.</p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <ButtonLink href="/checker">
                 Check suspiciousness <ArrowRight className="ml-2 h-4 w-4" />
               </ButtonLink>
@@ -31,8 +31,8 @@ export default function LandingPage() {
               </ButtonLink>
             </div>
           </div>
-          <div className="relative min-h-[560px] lg:min-h-[640px]">
-            <Card className="absolute right-0 top-4 w-[88%] rotate-2 p-5 shadow-soft">
+          <div className="relative grid gap-4 lg:min-h-[640px]">
+            <Card className="w-full p-5 shadow-soft lg:absolute lg:right-0 lg:top-4 lg:w-[88%] lg:rotate-2">
               <p className="text-sm font-semibold">Source content</p>
               <p className="mt-3 rounded-[1rem] border border-border bg-white p-4 text-sm leading-7 text-muted shadow-inner">{brand.sampleText}</p>
               <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted">
@@ -41,7 +41,7 @@ export default function LandingPage() {
                 <span className="rounded-full bg-canvas px-3 py-1">Mock OCR ready</span>
               </div>
             </Card>
-            <div className="absolute left-0 top-36 w-[90%] rotate-[-1.5deg]">
+            <div className="w-full lg:absolute lg:left-0 lg:top-36 lg:w-[90%] lg:rotate-[-1.5deg]">
               <ResultSummaryCard result={mockAnalyses[0]} variant="plain" />
             </div>
           </div>
@@ -53,7 +53,7 @@ export default function LandingPage() {
                 <CheckCircle2 className="mt-1 h-5 w-5 text-credible" aria-hidden="true" />
                 <div>
                   <h2 className="font-semibold">{title}</h2>
-                <p className="mt-1 text-sm text-muted">{text}</p>
+                  <p className="mt-1 text-sm text-muted">{text}</p>
                 </div>
               </div>
             ))}
@@ -96,7 +96,7 @@ export default function LandingPage() {
           <ButtonLink href="/checker" className="mt-8">Start a new check</ButtonLink>
         </section>
       </main>
-      <footer className="border-t border-border px-4 py-6 text-center text-sm text-muted">{brand.name} · {brand.descriptor}</footer>
+      <footer className="border-t border-border px-4 py-6 text-center text-sm text-muted">{brand.name} - {brand.descriptor}</footer>
     </div>
   );
 }

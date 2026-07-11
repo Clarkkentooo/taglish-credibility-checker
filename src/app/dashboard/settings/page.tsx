@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
@@ -10,7 +10,7 @@ export default function SettingsPage() {
   const [notice, setNotice] = useState("");
 
   return (
-    <div className="space-y-5">
+    <div className="mx-auto w-full space-y-5 lg:w-1/2">
       <div>
         <h1 className="text-4xl font-black tracking-[0.015em]">Settings</h1>
         <p className="mt-2 text-muted">Profile, appearance, language, and demo data controls.</p>
@@ -52,7 +52,13 @@ export default function SettingsPage() {
         <Button className="mt-4" variant="danger" onClick={() => setNotice("Demo history deletion queued in mock mode.")}>Delete demo history</Button>
         {notice ? <p className="mt-3 text-sm text-credible" role="status">{notice}</p> : null}
       </Card>
-      <Badge>Development mock mode enabled</Badge>
+      <Card className="p-5">
+        <h2 className="text-xl font-semibold">Account</h2>
+        <p className="mt-2 text-muted">End the mocked session and return to the sign-in page.</p>
+        <ButtonLink href="/sign-in" variant="secondary" className="mt-4">
+          Log out
+        </ButtonLink>
+      </Card>
     </div>
   );
 }

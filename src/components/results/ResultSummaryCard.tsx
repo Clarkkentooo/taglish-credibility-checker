@@ -60,9 +60,9 @@ export function ResultSummaryCard({ result, variant = "default" }: { result: Ana
                 <Image
                   src={illustration.src}
                   alt={illustration.alt}
-                  width={176}
-                  height={144}
-                  className="absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 scale-125 object-contain object-center"
+                  fill
+                  sizes="92px"
+                  className="object-contain object-center scale-125"
                 />
               </span>
             )}

@@ -1,57 +1,65 @@
 "use client";
 
-import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/beui/drawer";
+import { AccountSettingsLink, DashboardNavLinks } from "@/components/layout/AppSidebar";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { Button } from "@/components/ui/button";
-import { appNavigation } from "@/config/navigation";
-import { cn } from "@/lib/utils";
 
 export function MobileNavigation() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
+  useEffect(() => {
+    function handleDashboardDrawerOpen(event: Event) {
+      const detail = (event as CustomEvent<{ drawer: string }>).detail;
+      if (detail?.drawer !== "sidebar") setOpen(false);
+    }
+    window.addEventListener("tsek:dashboard-drawer-open", handleDashboardDrawerOpen);
+    return () => window.removeEventListener("tsek:dashboard-drawer-open", handleDashboardDrawerOpen);
+  }, []);
+
+  function updateOpen(nextOpen: boolean) {
+    setOpen(nextOpen);
+    if (nextOpen) {
+      window.dispatchEvent(new CustomEvent("tsek:dashboard-drawer-open", { detail: { drawer: "sidebar" } }));
+    }
+  }
+
   return (
-    <header className="sticky top-0 z-40 border-b border-white/70 bg-white/80 p-3 backdrop-blur-xl lg:hidden">
-      <div className="flex items-center justify-between">
-        <BrandLogo href="/dashboard" />
-        <Button variant="secondary" aria-label="Open menu" onClick={() => setOpen(true)} className="px-3">
-          <Menu className="h-5 w-5" />
-        </Button>
-      </div>
-      {open ? (
-        <div className="fixed inset-0 z-50 bg-ink/35" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-          <div className="ml-auto h-full w-[min(88vw,360px)] bg-white/92 p-4 shadow-soft backdrop-blur-xl">
-            <div className="flex items-center justify-between">
+    <header className="sticky top-0 z-40 border-b border-white/70 bg-white/85 px-3 py-2 backdrop-blur-xl lg:hidden">
+      <div className="grid grid-cols-[44px_minmax(0,1fr)_44px] items-center gap-2">
+        <Drawer open={open} onOpenChange={updateOpen}>
+          <DrawerTrigger asChild>
+            <Button variant="secondary" aria-label="Open menu" className="min-h-11 w-11 px-0">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent side="left" size="clamp(17rem,70vw,22rem)" className="z-[90]">
+            <DrawerHeader className="flex items-center justify-between gap-3 border-b-0 pb-2">
+              <DrawerTitle className="sr-only">Navigation</DrawerTitle>
+              <DrawerDescription className="sr-only">Dashboard navigation</DrawerDescription>
               <BrandLogo href="/dashboard" />
-              <Button variant="ghost" aria-label="Close menu" onClick={() => setOpen(false)} className="px-3">
-                <X className="h-5 w-5" />
-              </Button>
+              <DrawerClose
+                aria-label="Close menu"
+                className="border border-white/70 bg-white/70 shadow-sm backdrop-blur hover:bg-white"
+              >
+                <Menu className="h-5 w-5" aria-hidden="true" />
+              </DrawerClose>
+            </DrawerHeader>
+            <div className="min-h-0 flex-1 overflow-y-auto py-4">
+              <DashboardNavLinks pathname={pathname} onNavigate={() => updateOpen(false)} className="mt-4" />
             </div>
-            <nav className="mt-8 space-y-2">
-              {appNavigation.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={`${item.href}-${item.label}`}
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    className={cn(
-                      "flex min-h-12 items-center gap-3 rounded-full px-3 text-sm font-medium text-muted",
-                      pathname === item.href && "bg-ink text-white",
-                    )}
-                  >
-                    <Icon className="h-4 w-4" aria-hidden="true" />
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
+            <AccountSettingsLink pathname={pathname} onNavigate={() => updateOpen(false)} className="mt-4" />
+          </DrawerContent>
+        </Drawer>
+        <div className="flex min-w-0 justify-center">
+          <BrandLogo href="/dashboard" />
         </div>
-      ) : null}
+        <span aria-hidden="true" />
+      </div>
     </header>
   );
 }
