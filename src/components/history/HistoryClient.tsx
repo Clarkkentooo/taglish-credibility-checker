@@ -68,32 +68,24 @@ export function HistoryClient() {
   if (error) return <ErrorState title="History unavailable" description={error} />;
 
   return (
-    <div className="space-y-4">
-      <Card className="grid gap-3 p-4 md:grid-cols-[1fr_180px_180px_160px]">
-        <label className="text-sm font-medium">
+    <div className="mx-auto w-full space-y-4 lg:w-1/2">
+      <Card className="grid gap-2 p-3 md:grid-cols-[1fr_145px_130px]">
+        <label className="text-xs font-medium">
           Search
-          <input className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search title or excerpt" />
+          <input className="mt-1.5 min-h-9 w-full rounded-full border border-white/80 bg-white/65 px-3 text-sm" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search title or excerpt" />
         </label>
-        <label className="text-sm font-medium">
+        <label className="text-xs font-medium">
           Result
-          <select className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" value={filter} onChange={(event) => setFilter(event.target.value as Filter)}>
+          <select className="mt-1.5 min-h-9 w-full rounded-full border border-white/80 bg-white/65 px-3 text-sm" value={filter} onChange={(event) => setFilter(event.target.value as Filter)}>
             <option value="all">All results</option>
             <option value="credible">Not Suspicious</option>
             <option value="not_credible">Highly Suspicious</option>
             <option value="uncertain">Suspicious</option>
           </select>
         </label>
-        <label className="text-sm font-medium">
-          Date
-          <select className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" aria-label="Date filter">
-            <option>Any date</option>
-            <option>Past 7 days</option>
-            <option>Past 30 days</option>
-          </select>
-        </label>
-        <label className="text-sm font-medium">
+        <label className="text-xs font-medium">
           Sort
-          <select className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" value={sort} onChange={(event) => setSort(event.target.value as Sort)}>
+          <select className="mt-1.5 min-h-9 w-full rounded-full border border-white/80 bg-white/65 px-3 text-sm" value={sort} onChange={(event) => setSort(event.target.value as Sort)}>
             <option value="newest">Newest</option>
             <option value="oldest">Oldest</option>
             <option value="confidence">Confidence</option>
@@ -108,7 +100,7 @@ export function HistoryClient() {
           <HistoryTable analyses={filtered} onDelete={setPendingDelete} onRename={rename} />
           <div className="grid gap-3 md:hidden">
             {filtered.map((analysis) => (
-              <HistoryCard key={analysis.id} analysis={analysis} onDelete={setPendingDelete} />
+              <HistoryCard key={analysis.id} analysis={analysis} onDelete={setPendingDelete} onRename={rename} />
             ))}
           </div>
         </>

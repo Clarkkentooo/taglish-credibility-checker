@@ -16,6 +16,7 @@ describe("Analysis results", () => {
 
   it("submits feedback dialog", async () => {
     render(<AnalysisResults result={mockAnalyses[0]} />);
+    await userEvent.click(screen.getByRole("button", { name: /feedback/i }));
     await userEvent.click(screen.getByRole("button", { name: /report an incorrect result/i }));
     await userEvent.type(screen.getByLabelText(/optional note/i), "Needs more context from official sources.");
     await userEvent.click(screen.getByRole("button", { name: /submit report/i }));

@@ -1,4 +1,4 @@
-import { ExternalLink, FileCheck2, Share2, UserCheck } from "lucide-react";
+import { FileCheck2, Share2, UserCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 const steps = [
@@ -21,23 +21,16 @@ const steps = [
 
 export function VerifyNextSteps() {
   return (
-    <Card className="p-5 shadow-none">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-semibold">Verify next steps</h2>
-          <p className="mt-1 text-sm text-muted">Use the analysis as a screening aid before taking action.</p>
-        </div>
-        <ExternalLink className="h-5 w-5 text-muted" aria-hidden="true" />
-      </div>
-      <div className="mt-4 space-y-3">
+    <Card className="w-full p-4 text-left shadow-none sm:p-5">
+      <div className="w-full space-y-3">
         {steps.map((step) => {
           const Icon = step.icon;
           return (
-            <div key={step.title} className="flex gap-3 rounded-[1.1rem] border border-white/80 bg-white/50 p-3">
+            <div key={step.title} className="flex w-full items-start gap-3 rounded-[1.1rem] border border-white/80 bg-white/50 p-3 text-left">
               <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-caution/10 text-caution">
                 <Icon className="h-4 w-4" aria-hidden="true" />
               </span>
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold">{step.title}</p>
                 <p className="text-xs text-muted">{step.text}</p>
               </div>

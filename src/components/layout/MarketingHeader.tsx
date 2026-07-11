@@ -36,11 +36,14 @@ export function MarketingHeader() {
             </a>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
-          <ButtonLink href="/sign-in" variant="ghost" className="hidden sm:inline-flex">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <ButtonLink href="/sign-in" variant="ghost" className="min-h-9 px-3 text-xs sm:min-h-11 sm:px-5 sm:text-sm">
             Sign in
           </ButtonLink>
-          <ButtonLink href="/checker">Open checker</ButtonLink>
+          <ButtonLink href="/checker" className="min-h-9 px-3 text-xs sm:min-h-11 sm:px-5 sm:text-sm">
+            <span className="sm:hidden">Checker</span>
+            <span className="hidden sm:inline">Open checker</span>
+          </ButtonLink>
         </div>
       </div>
     </header>

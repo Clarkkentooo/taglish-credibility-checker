@@ -15,6 +15,14 @@ export function formatDate(value: string) {
   }).format(new Date(value));
 }
 
+export function formatNumericDate(value: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
 export function countWords(value: string) {
   return value.trim().split(/\s+/).filter(Boolean).length;
 }

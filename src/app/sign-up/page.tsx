@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -6,25 +7,41 @@ import { Card } from "@/components/ui/card";
 export default function SignUpPage() {
   return (
     <main className="grid min-h-screen place-items-center px-4 py-10">
-      <Card className="w-full max-w-md p-6 shadow-glow">
+      <div className="grid w-full max-w-5xl gap-5 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+      <Card className="w-full max-w-md justify-self-center p-6 shadow-glow">
         <BrandLogo />
         <h1 className="mt-8 text-3xl font-black tracking-[0.015em]">Create a demo account</h1>
-        <p className="mt-2 text-sm text-muted">Saved analyses are mocked until backend authentication is connected.</p>
-        <form className="mt-6 space-y-4">
+        <p id="signup-demo-note" className="mt-2 text-sm text-muted">
+          Saved analyses are mocked until backend authentication is connected. This form opens the demo dashboard.
+        </p>
+        <ButtonLink href="/dashboard" variant="secondary" className="mt-6 w-full gap-2">
+          <span className="grid h-5 w-5 place-items-center rounded-full bg-white text-sm font-black text-ink">G</span>
+          Sign up with Google
+        </ButtonLink>
+        <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-[0.16em] text-muted">
+          <span className="h-px flex-1 bg-border" />
+          Or use email
+          <span className="h-px flex-1 bg-border" />
+        </div>
+        <form className="space-y-4" aria-describedby="signup-demo-note">
           <label className="block text-sm font-medium">
             Name
-            <input className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" placeholder="Your name" />
+            <input autoComplete="name" className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" placeholder="Demo reviewer" />
           </label>
           <label className="block text-sm font-medium">
             Email
-            <input type="email" className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" placeholder="you@example.com" />
+            <input type="email" autoComplete="email" className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" placeholder="demo@tsek.local" />
           </label>
           <ButtonLink href="/dashboard" className="w-full">Start demo</ButtonLink>
         </form>
         <p className="mt-5 text-sm text-muted">
-          Already have an account? <Link href="/sign-in" className="font-semibold text-primary">Sign in</Link>
+          Already have an account? <Link href="/sign-in" className="font-semibold text-primary hover:text-ink">Sign in</Link>
         </p>
       </Card>
+        <Card className="hidden overflow-hidden p-0 shadow-soft lg:block">
+          <Image src="/caps-illus/sign-up.svg" alt="Person reviewing social content illustration" width={1254} height={1254} className="h-[30rem] w-full object-contain p-8" priority />
+        </Card>
+      </div>
     </main>
   );
 }

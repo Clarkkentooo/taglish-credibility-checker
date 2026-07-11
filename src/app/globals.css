@@ -39,6 +39,7 @@ body {
   background: rgb(var(--color-surface));
   color: rgb(var(--color-ink));
   font-family: var(--font-body), Georgia, ui-serif, serif;
+  overflow-x: hidden;
 }
 
 h1,
@@ -47,6 +48,7 @@ h3,
 .font-display {
   font-family: var(--font-display), Georgia, ui-serif, serif;
   letter-spacing: 0.015em;
+  text-wrap: balance;
 }
 
 button,
@@ -54,6 +56,11 @@ input,
 textarea,
 select {
   font: inherit;
+}
+
+p,
+li {
+  text-wrap: pretty;
 }
 
 ::selection {

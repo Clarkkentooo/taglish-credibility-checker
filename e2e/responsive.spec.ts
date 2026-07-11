@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const widths = [1440, 1024, 768, 390, 360];
+const widths = [320, 360, 375, 390, 414, 480, 768, 820, 1024, 1280, 1440, 1920];
 const routes = ["/", "/checker", "/dashboard/history"];
 
 test.describe("responsive layouts", () => {

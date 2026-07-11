@@ -49,43 +49,80 @@ export function AppSidebar() {
             </>
           )}
         </div>
-        <nav className="mt-8 space-y-1" aria-label="Dashboard navigation">
-          {appNavigation.map((item) => {
-            const Icon = item.icon;
-            const active = pathname === item.href;
-            return (
-              <Link
-                key={`${item.href}-${item.label}`}
-                href={item.href}
-                title={collapsed ? item.label : undefined}
-                className={cn(
-                  "flex min-h-10 items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
-                  collapsed ? "justify-center px-0" : "gap-3 px-3",
-                  active && "bg-ink text-white shadow-sm hover:bg-ink hover:text-white",
-                )}
-              >
-                <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span className={cn("whitespace-nowrap transition-[opacity,transform,width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "w-0 translate-x-3 opacity-0" : "w-auto translate-x-0 opacity-100")}>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-        <Link
-          href="/dashboard/settings"
-          title={collapsed ? "Account settings" : undefined}
-          className={cn(
-            "mt-auto flex min-h-10 items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
-            collapsed ? "justify-center px-0" : "gap-3 px-3",
-            pathname === "/dashboard/settings" && "bg-ink text-white shadow-sm hover:bg-ink hover:text-white",
-          )}
-        >
-          <UserCircle2 className="h-7 w-7 shrink-0" aria-hidden="true" />
-          <span className={cn("min-w-0 flex-1 whitespace-nowrap transition-[opacity,transform,width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "w-0 translate-x-3 opacity-0" : "w-auto translate-x-0 opacity-100")}>
-            Demo reviewer
-          </span>
-          {!collapsed ? <MoreHorizontal className="h-4 w-4 shrink-0" aria-hidden="true" /> : null}
-        </Link>
+        <DashboardNavLinks pathname={pathname} collapsed={collapsed} className="mt-8" />
+        <AccountSettingsLink pathname={pathname} collapsed={collapsed} className="mt-auto" />
       </div>
     </aside>
+  );
+}
+
+export function DashboardNavLinks({
+  pathname,
+  collapsed = false,
+  onNavigate,
+  className,
+}: {
+  pathname: string;
+  collapsed?: boolean;
+  onNavigate?: () => void;
+  className?: string;
+}) {
+  return (
+    <nav className={cn("space-y-1", className)} aria-label="Dashboard navigation">
+      {appNavigation.map((item) => {
+        const Icon = item.icon;
+        const active = pathname === item.href;
+        return (
+          <Link
+            key={`${item.href}-${item.label}`}
+            href={item.href}
+            title={collapsed ? item.label : undefined}
+            onClick={onNavigate}
+            aria-current={active ? "page" : undefined}
+            className={cn(
+              "flex min-h-10 items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
+              collapsed ? "justify-center px-0" : "gap-3 px-3",
+              active && "bg-ink text-white shadow-sm hover:bg-ink hover:text-white",
+            )}
+          >
+            <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span className={cn("whitespace-nowrap transition-[opacity,transform,width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "w-0 translate-x-3 opacity-0" : "w-auto translate-x-0 opacity-100")}>{item.label}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+export function AccountSettingsLink({
+  pathname,
+  collapsed = false,
+  onNavigate,
+  className,
+}: {
+  pathname: string;
+  collapsed?: boolean;
+  onNavigate?: () => void;
+  className?: string;
+}) {
+  return (
+    <Link
+      href="/dashboard/settings"
+      title={collapsed ? "Account settings" : undefined}
+      onClick={onNavigate}
+      aria-current={pathname === "/dashboard/settings" ? "page" : undefined}
+      className={cn(
+        "flex min-h-10 items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
+        collapsed ? "justify-center px-0" : "gap-3 px-3",
+        pathname === "/dashboard/settings" && "bg-ink text-white shadow-sm hover:bg-ink hover:text-white",
+        className,
+      )}
+    >
+      <UserCircle2 className="h-7 w-7 shrink-0" aria-hidden="true" />
+      <span className={cn("min-w-0 flex-1 whitespace-nowrap transition-[opacity,transform,width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "w-0 translate-x-3 opacity-0" : "w-auto translate-x-0 opacity-100")}>
+        Demo reviewer
+      </span>
+      {!collapsed ? <MoreHorizontal className="h-4 w-4 shrink-0" aria-hidden="true" /> : null}
+    </Link>
   );
 }

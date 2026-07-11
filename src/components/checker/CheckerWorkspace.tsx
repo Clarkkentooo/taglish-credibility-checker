@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { PanelRightClose, PanelRightOpen } from "lucide-react";
+import { AnimatedToastStack, type AnimatedToast } from "@/components/beui/animated-toast-stack";
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/beui/drawer";
 import { AnalysisProgress } from "@/components/checker/AnalysisProgress";
 import { TextAnalysisEditor } from "@/components/checker/TextAnalysisEditor";
 import { AnalysisResults } from "@/components/results/AnalysisResults";
@@ -20,8 +22,10 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
   const [error, setError] = useState("");
   const [online, setOnline] = useState(true);
   const [resultsOpen, setResultsOpen] = useState(true);
+  const [resultDrawerOpen, setResultDrawerOpen] = useState(false);
   const [sampleIndex, setSampleIndex] = useState(0);
   const [pendingSample, setPendingSample] = useState<AnalysisResult | null>(null);
+  const [toasts, setToasts] = useState<AnimatedToast[]>([]);
 
   useEffect(() => {
     const update = () => setOnline(navigator.onLine);
@@ -34,9 +38,34 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
     };
   }, []);
 
+  useEffect(() => {
+    function handleDashboardDrawerOpen(event: Event) {
+      const detail = (event as CustomEvent<{ drawer: string }>).detail;
+      if (detail?.drawer !== "results") setResultDrawerOpen(false);
+    }
+    window.addEventListener("tsek:dashboard-drawer-open", handleDashboardDrawerOpen);
+    return () => window.removeEventListener("tsek:dashboard-drawer-open", handleDashboardDrawerOpen);
+  }, []);
+
+  function updateResultDrawerOpen(open: boolean) {
+    setResultDrawerOpen(open);
+    if (open) {
+      window.dispatchEvent(new CustomEvent("tsek:dashboard-drawer-open", { detail: { drawer: "results" } }));
+    }
+  }
+
   async function runAnalysis() {
     setError("");
     setLoading(true);
+    setToasts([
+      {
+        id: "analysis-loading",
+        title: "Checking content",
+        description: "Results will appear in the results drawer.",
+        status: "loading",
+        duration: 0,
+      },
+    ]);
     try {
       const matchingSample = pendingSample && pendingSample.sourceText === text ? pendingSample : null;
       const next = matchingSample
@@ -44,8 +73,26 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
         : await analyzeText(text);
       setResult(next);
       setPendingSample(null);
+      setToasts([
+        {
+          id: `analysis-ready-${next.id}`,
+          title: "Results ready",
+          description: "Open the results drawer to review the score and highlights.",
+          status: "success",
+          duration: 4200,
+        },
+      ]);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Analysis failed.");
+      setToasts([
+        {
+          id: "analysis-error",
+          title: "Analysis failed",
+          description: caught instanceof Error ? caught.message : "Analysis failed.",
+          status: "error",
+          duration: 5200,
+        },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -62,9 +109,17 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
     setSampleIndex((index) => index + 1);
   }
 
+  function updateText(nextText: string) {
+    setText(nextText);
+    setPendingSample(null);
+    setResult(null);
+    setError("");
+  }
+
   return (
     <div className={cn("relative grid gap-5", resultsOpen ? "xl:grid-cols-[minmax(560px,1fr)_420px]" : "xl:grid-cols-1")}>
-      <div className="absolute right-0 top-0 z-10">
+      <AnimatedToastStack toasts={toasts} onDismiss={(id) => setToasts((items) => items.filter((toast) => toast.id !== id))} />
+      <div className="absolute right-0 top-0 z-10 hidden xl:block">
         <Button
           variant="secondary"
           onClick={() => setResultsOpen((value) => !value)}
@@ -77,14 +132,44 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
           {resultsOpen ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
         </Button>
       </div>
-      <div className="mx-auto w-full max-w-3xl space-y-4 pt-14 xl:pt-0">
+      <div className="absolute -top-3 right-0 z-10 xl:hidden">
+        <Drawer open={resultDrawerOpen} onOpenChange={updateResultDrawerOpen}>
+          <DrawerTrigger asChild>
+            <Button
+              variant="secondary"
+              aria-label="Show results"
+              className="min-h-10 gap-2 px-3"
+              title="Show results"
+            >
+              <PanelRightOpen className="h-4 w-4" aria-hidden="true" />
+              <span className="text-xs font-semibold">Results</span>
+              {result ? (
+                <span className="absolute -right-1 -top-1 flex h-3 w-3" aria-label="New results available">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-critical/50" />
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-critical" />
+                </span>
+              ) : null}
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent side="right" size="min(92vw,32rem)" className="z-[90] px-4">
+            <DrawerHeader className="flex items-start justify-between gap-3">
+              <div>
+                <DrawerTitle>Analysis results</DrawerTitle>
+                <DrawerDescription>Suspicion score, highlights, and explanations</DrawerDescription>
+              </div>
+              <DrawerClose aria-label="Close results" />
+            </DrawerHeader>
+            <div className="result-scrollbar min-h-0 flex-1 overflow-y-auto py-4">
+              <ResultPanelContent loading={loading} error={error} result={result} />
+            </div>
+          </DrawerContent>
+        </Drawer>
+      </div>
+      <div className="mx-auto w-full max-w-3xl space-y-4 pt-10 xl:pt-0">
         {!online ? <ErrorState title="Offline mode" description="You appear to be offline. Mock history remains visible, but analysis may not complete." /> : null}
         <TextAnalysisEditor
           value={text}
-          onChange={(nextText) => {
-            setText(nextText);
-            setPendingSample(null);
-          }}
+          onChange={updateText}
           onAnalyze={() => void runAnalysis()}
           onLoadSample={loadSample}
           loading={loading}
@@ -92,15 +177,31 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
         />
       </div>
       {resultsOpen ? (
-        <aside id="analysis-result-sidebar" className="result-scrollbar space-y-4 xl:-my-6 xl:-mr-8 xl:sticky xl:top-0 xl:h-[calc(100vh+3rem)] xl:overflow-auto xl:border-l xl:border-border/70 xl:bg-white xl:px-4 xl:py-5" aria-label="Suspicion result panel">
-          {loading ? <AnalysisProgress /> : null}
-          {error ? <ErrorState title="Analysis could not finish" description={error} /> : null}
-          {!loading && !error && result ? (
-            <AnalysisResults result={result} />
-          ) : !loading && !error ? (
-            <EmptyState title="Add something to generate results" description="Paste at least 50 characters, then run an analysis to see the score, highlights, and explanations." />
-          ) : null}
+        <aside id="analysis-result-sidebar" className="result-scrollbar hidden space-y-4 xl:-my-6 xl:sticky xl:top-0 xl:block xl:h-[calc(100vh+3rem)] xl:overflow-auto xl:border-l xl:border-border/70 xl:bg-white xl:px-4 xl:py-5" aria-label="Suspicion result panel">
+          <ResultPanelContent loading={loading} error={error} result={result} />
         </aside>
+      ) : null}
+    </div>
+  );
+}
+
+function ResultPanelContent({
+  loading,
+  error,
+  result,
+}: {
+  loading: boolean;
+  error: string;
+  result: AnalysisResult | null;
+}) {
+  return (
+    <div className="space-y-4">
+      {loading ? <AnalysisProgress /> : null}
+      {error ? <ErrorState title="Analysis could not finish" description={error} /> : null}
+      {!loading && !error && result ? (
+        <AnalysisResults result={result} />
+      ) : !loading && !error ? (
+        <EmptyState title="Add something to generate results" description="Paste at least 50 characters, then run an analysis to see the score, highlights, and explanations." />
       ) : null}
     </div>
   );
