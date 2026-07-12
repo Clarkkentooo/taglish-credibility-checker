@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { ButtonLink } from "@/components/ui/button";
 import { dashboardStats } from "@/config/navigation";
@@ -22,19 +23,18 @@ export default function DashboardPage() {
           <h1 className="mt-2 text-4xl font-black tracking-[0.015em]">Welcome back.</h1>
           <p className="mt-2 text-muted">Start a new suspiciousness check or revisit recent mock results.</p>
         </div>
-        <ButtonLink href="/dashboard/checker" className="w-full sm:w-auto">New analysis</ButtonLink>
+        <ButtonLink href="/dashboard/checker" className="w-full whitespace-nowrap sm:w-auto">New analysis</ButtonLink>
       </section>
       <section className="grid gap-4 sm:grid-cols-2">
-        {dashboardStats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={stat.key} className="p-5">
-              <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
-              <p className="mt-4 text-sm text-muted">{stat.label} - Demo data</p>
-              <p className="mt-2 text-3xl font-bold">{counts[stat.key]}</p>
-            </Card>
-          );
-        })}
+        {dashboardStats.map((stat) => (
+          <Card key={stat.key} className="p-5">
+            <span className="block h-14 w-14 text-primary" aria-hidden="true">
+              <Image src={stat.iconSrc} alt="" width={56} height={56} className="h-14 w-14 object-contain" />
+            </span>
+            <p className="mt-4 text-sm text-muted">{stat.label} - Demo data</p>
+            <p className="mt-2 text-3xl font-bold">{counts[stat.key]}</p>
+          </Card>
+        ))}
       </section>
       <section>
         <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">

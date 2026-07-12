@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, Bookmark, Clock3, Home, Sparkles } from "lucide-react";
+import { BookOpen, Bookmark, Clock3, Home, Sparkles } from "lucide-react";
 
 export const marketingNavigation = [
   { href: "/#how-it-works", label: "How it works" },
@@ -15,8 +15,8 @@ export const appNavigation = [
 ];
 
 export const dashboardStats = [
-  { label: "Total analyses", key: "total", icon: BarChart3 },
-  { label: "Not suspicious", key: "credible", icon: BarChart3 },
-  { label: "Highly suspicious", key: "notCredible", icon: BarChart3 },
-  { label: "Suspicious", key: "uncertain", icon: BarChart3 },
+  { label: "Total analyses", key: "total", iconSrc: "/caps-illus/dashboard/total-analyses.svg" },
+  { label: "Not suspicious", key: "credible", iconSrc: "/caps-illus/dashboard/not-suspicious.svg" },
+  { label: "Highly suspicious", key: "notCredible", iconSrc: "/caps-illus/dashboard/highly-suspicious.svg" },
+  { label: "Suspicious", key: "uncertain", iconSrc: "/caps-illus/dashboard/suspicious.svg" },
 ] as const;

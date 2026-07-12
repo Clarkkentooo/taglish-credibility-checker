@@ -1,4 +1,5 @@
 import { ArrowRight, BookOpen, CheckCircle2, FileSearch, ShieldQuestion, Sparkles } from "lucide-react";
+import Image from "next/image";
 import { MarketingHeader } from "@/components/layout/MarketingHeader";
 import { ResultSummaryCard } from "@/components/results/ResultSummaryCard";
 import { ButtonLink } from "@/components/ui/button";
@@ -10,6 +11,24 @@ const valueItems = [
   ["Taglish-aware", "Designed around Filipino-English election-content patterns."],
   ["Explainable signals", "Shows the phrases and categories that influenced the estimate."],
   ["Model comparison", "Keeps RoBERTa-Tagalog, mBERT, and XLM-RoBERTa visible but secondary."],
+];
+
+const audienceItems = [
+  {
+    title: "Everyday users",
+    text: "Check a post, caption, or thread excerpt before sharing it.",
+    iconSrc: "/caps-illus/landing-page/everyday-users.svg",
+  },
+  {
+    title: "Educators and students",
+    text: "Discuss media literacy with explainable, non-accusatory examples.",
+    iconSrc: "/caps-illus/landing-page/educators-and-students.svg",
+  },
+  {
+    title: "Journalists and researchers",
+    text: "Screen language signals while keeping verification standards human-led.",
+    iconSrc: "/caps-illus/landing-page/journalists-and-researchers.svg",
+  },
 ];
 
 export default function LandingPage() {
@@ -77,14 +96,13 @@ export default function LandingPage() {
         </section>
         <section className="bg-white/35 backdrop-blur">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 lg:grid-cols-3 lg:px-8">
-            {[
-              ["Everyday users", "Check a post, caption, or thread excerpt before sharing it."],
-              ["Educators and students", "Discuss media literacy with explainable, non-accusatory examples."],
-              ["Journalists and researchers", "Screen language signals while keeping verification standards human-led."],
-            ].map(([title, text]) => (
-              <Card key={title} className="p-5">
-                <h3 className="font-semibold">{title}</h3>
-                <p className="mt-2 text-sm text-muted">{text}</p>
+            {audienceItems.map((item) => (
+              <Card key={item.title} className="overflow-hidden p-5">
+                <span className="relative block h-24 overflow-hidden rounded-2xl bg-canvas" aria-hidden="true">
+                  <Image src={item.iconSrc} alt="" fill sizes="320px" className="object-contain scale-[1.65]" />
+                </span>
+                <h3 className="mt-5 font-semibold">{item.title}</h3>
+                <p className="mt-2 text-sm text-muted">{item.text}</p>
               </Card>
             ))}
           </div>
