@@ -35,7 +35,7 @@ export default function MethodologyPage() {
         <p className="text-sm font-semibold text-primary">Methodology</p>
         <h1 className="mt-3 text-5xl font-black tracking-[0.015em]">Plain-language model explanation</h1>
         <p className="mt-4 max-w-3xl text-lg text-muted">
-          {brand.name} is designed as a screening interface for a Taglish credibility-classification research workflow. The frontend currently uses realistic mock data.
+          {brand.name} is designed as a screening interface for a Taglish credibility-classification research workflow. Real analysis uses the local model backend with optional Groq explanation support.
         </p>
         <div className="mt-10 grid gap-4 md:grid-cols-2">
           {sections.map((section) => {
@@ -60,7 +60,7 @@ export default function MethodologyPage() {
                   {index === 0
                     ? "The user supplies Taglish election-related text."
                     : index === 1
-                      ? "Mock probabilities show how the three model families lean."
+                      ? "Model probabilities show how the available analysis layers lean."
                       : "Highlights explain what language features influenced the result."}
                 </p>
               </div>
@@ -72,7 +72,7 @@ export default function MethodologyPage() {
           <p className="mt-3 text-muted">
             Correlation or model influence is not proof of factual causation. False positives and false negatives are possible, especially with short text, satire, rapidly changing election information, or missing context. Human verification and reliable sources remain necessary.
           </p>
-          <p className="mt-3 text-muted">In mock mode, analysis history and feedback are demonstration data only and are not sent to a real backend.</p>
+          <p className="mt-3 text-muted">Normal-user history is saved in browser storage only. Demo mode uses seeded sample analyses for presentation and testing.</p>
         </section>
         <Link href="/checker" className="mt-8 inline-flex min-h-11 items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white">
           Try the checker <ArrowRight className="ml-2 h-4 w-4" />

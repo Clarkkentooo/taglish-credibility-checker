@@ -57,7 +57,7 @@ export default function LandingPage() {
               <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted">
                 <span className="rounded-full bg-canvas px-3 py-1">Text input</span>
                 <span className="rounded-full bg-canvas px-3 py-1">27 words</span>
-                <span className="rounded-full bg-canvas px-3 py-1">Mock OCR ready</span>
+                <span className="rounded-full bg-canvas px-3 py-1">OCR ready</span>
               </div>
             </Card>
             <div className="w-full lg:absolute lg:left-0 lg:top-36 lg:w-[90%] lg:rotate-[-1.5deg]">

@@ -5,7 +5,7 @@ export default function HistoryPage() {
     <div className="space-y-5">
       <div className="mx-auto w-full lg:w-1/2">
         <h1 className="text-3xl font-bold">Analysis history</h1>
-        <p className="mt-2 text-muted">Search, filter, rename, duplicate, and delete demo suspiciousness checks.</p>
+        <p className="mt-2 text-muted">Search, filter, rename, duplicate, and delete saved suspiciousness checks.</p>
       </div>
       <HistoryClient />
     </div>

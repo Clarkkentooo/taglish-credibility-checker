@@ -1,8 +1,12 @@
+﻿"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import type { InputHTMLAttributes } from "react";
+import { useRouter } from "next/navigation";
+import type { FormEvent, InputHTMLAttributes } from "react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
-import { Button, ButtonLink } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { isDemoCredentials, setSessionMode } from "@/lib/session";
 
 type AuthField = {
   label: string;
@@ -38,6 +42,22 @@ export function AuthPage({
   footerHref,
   footerLinkLabel,
 }: AuthPageProps) {
+  const router = useRouter();
+
+  function continueAsUser() {
+    setSessionMode("user");
+    router.push("/dashboard");
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const email = String(formData.get("email") ?? "");
+    const password = String(formData.get("password") ?? "");
+    setSessionMode(isDemoCredentials(email, password) ? "demo" : "user");
+    router.push("/dashboard");
+  }
+
   return (
     <main className="relative min-h-[100dvh] overflow-hidden bg-surface text-ink">
       <AuthIllustration />
@@ -51,19 +71,20 @@ export function AuthPage({
               {description}
             </p>
 
-            <ButtonLink href="/dashboard" variant="secondary" className="auth-google-button mt-7 w-full gap-3 border-border/65 bg-white text-base shadow-sm hover:border-muted/35">
+            <Button type="button" variant="secondary" className="auth-google-button mt-7 w-full gap-3 border-border/65 bg-white text-base shadow-sm hover:border-muted/35" onClick={continueAsUser}>
               <Image src="/google-icon-logo.svg" alt="" width={20} height={20} aria-hidden="true" className="h-5 w-5" />
               {googleLabel}
-            </ButtonLink>
+            </Button>
 
             <AuthDivider />
 
-            <form action="/dashboard" className="auth-form flex flex-col gap-5" aria-describedby={describedBy}>
+            <form onSubmit={handleSubmit} className="auth-form flex flex-col gap-5" aria-describedby={describedBy}>
               {fields.map((field) => (
                 <label key={field.name} className="auth-field block text-base font-semibold text-ink">
                   {field.label}
                   <input
                     id={field.name}
+                    name={field.name}
                     type={field.type ?? "text"}
                     autoComplete={field.autoComplete}
                     className={inputClassName}

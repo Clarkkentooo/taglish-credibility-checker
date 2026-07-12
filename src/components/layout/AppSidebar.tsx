@@ -3,11 +3,12 @@
 import { MoreHorizontal, PanelLeftClose, UserCircle2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/config/brand";
 import { appNavigation } from "@/config/navigation";
+import { getSessionMode, type SessionMode } from "@/lib/session";
 import { cn } from "@/lib/utils";
 
 export function AppSidebar() {
@@ -105,6 +106,12 @@ export function AccountSettingsLink({
   onNavigate?: () => void;
   className?: string;
 }) {
+  const [mode, setMode] = useState<SessionMode>("user");
+
+  useEffect(() => {
+    setMode(getSessionMode());
+  }, []);
+
   return (
     <Link
       href="/dashboard/settings"
@@ -120,7 +127,7 @@ export function AccountSettingsLink({
     >
       <UserCircle2 className="h-7 w-7 shrink-0" aria-hidden="true" />
       <span className={cn("min-w-0 flex-1 whitespace-nowrap transition-[opacity,transform,width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "w-0 translate-x-3 opacity-0" : "w-auto translate-x-0 opacity-100")}>
-        Demo reviewer
+        {mode === "demo" ? "Demo reviewer" : "Local reviewer"}
       </span>
       {!collapsed ? <MoreHorizontal className="h-4 w-4 shrink-0" aria-hidden="true" /> : null}
     </Link>

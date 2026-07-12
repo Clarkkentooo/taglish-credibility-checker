@@ -21,7 +21,7 @@ export function AnalysisResults({ result, summaryVariant = "default" }: { result
       <ResultAccordion title="Key factors" description="Signals that influenced the score">
         <FactorList spans={result.highlightedSpans} />
       </ResultAccordion>
-      <ResultAccordion title="Advanced model comparison" description="Compare the mock model scores">
+      <ResultAccordion title="Advanced model comparison" description="Compare the model scores">
         <ModelComparison scores={result.modelScores} />
       </ResultAccordion>
       <ResultAccordion title="Verify next steps" description="Actions to take before sharing">

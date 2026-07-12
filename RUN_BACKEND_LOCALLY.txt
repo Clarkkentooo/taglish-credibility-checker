@@ -1,0 +1,76 @@
+How to run tsek with the local backend
+
+Branch setup
+1. Fetch the latest remote branch:
+   git fetch origin
+
+2. Switch to the frontend branch:
+   git switch cb/frontend-initial
+
+3. Update your local branch:
+   git merge --ff-only origin/cb/frontend-initial
+
+Frontend setup
+1. Enable Corepack if needed:
+   corepack enable
+
+2. Install frontend dependencies:
+   corepack pnpm install
+
+Backend setup
+1. Install Python 3.11.
+
+2. Create a virtual environment from the repo root:
+   python -m venv .runtime\backend-venv
+
+3. Activate it:
+   .runtime\backend-venv\Scripts\activate
+
+4. Install backend dependencies:
+   python -m pip install --upgrade pip
+   python -m pip install -r backend\flask-api\requirements.txt
+
+Environment variables
+1. Create .env.local from .env.example:
+   copy .env.example .env.local
+
+2. Set your Groq key in .env.local:
+   GROQ_API_KEY=your_groq_key_here
+
+3. Keep these values for real backend mode:
+   NEXT_PUBLIC_USE_MOCK_API=false
+   FLASK_API_URL=http://127.0.0.1:5000
+
+Do not commit .env.local or any API key.
+
+Run the backend
+1. From the repo root, with the virtual environment activated:
+   cd backend\flask-api
+   python app.py
+
+2. Wait until the model is ready and Flask shows:
+   Running on http://127.0.0.1:5000
+
+3. In another terminal, verify:
+   powershell -Command "Invoke-WebRequest -Uri http://127.0.0.1:5000/health -UseBasicParsing"
+
+Run the frontend
+1. From the repo root in a new terminal:
+   corepack pnpm dev
+
+2. Open:
+   http://localhost:3000/dashboard/checker
+
+Demo account
+- Use demo@tsek.local and demo123 to view seeded demo dashboard/history data.
+- Use any other email/password to enter a normal local browser session.
+- Normal local-session analysis history is saved only in that browser.
+
+Before pushing
+Run these checks:
+   corepack pnpm typecheck
+   corepack pnpm build
+   corepack pnpm test
+   git grep -n "paste-the-key-prefix-here" -- .
+   git status --short
+   git diff --name-status

@@ -14,6 +14,7 @@ export function TextAnalysisEditor({
   value,
   onChange,
   onAnalyze,
+  onAnalyzeImage,
   onLoadSample,
   loading,
   result,
@@ -21,6 +22,7 @@ export function TextAnalysisEditor({
   value: string;
   onChange: (value: string) => void;
   onAnalyze: () => void;
+  onAnalyzeImage?: (file: File) => void;
   onLoadSample: () => void;
   loading: boolean;
   result?: AnalysisResult | null;
@@ -36,7 +38,7 @@ export function TextAnalysisEditor({
   const uploadAccept = inputMode === "image" ? "image/*" : ".txt,.docx";
   const uploadDescription =
     inputMode === "image"
-      ? "Attach an image file with readable text. OCR is mocked for now."
+      ? "Attach an image file with readable text. OCR and analysis will run through the backend."
       : "Attach `.txt` or `.docx` files. Document parsing is mocked for now.";
   const UploadIcon = inputMode === "image" ? ImageUp : FileText;
 
@@ -45,8 +47,8 @@ export function TextAnalysisEditor({
     const isTxt = file.name.endsWith(".txt");
     const isDocx = file.name.endsWith(".docx");
     if (inputMode === "image" && isImage) {
-      setUploadMessage("Image received. OCR is mocked in this frontend demo.");
-      onChange(`${brand.sampleText}\n\n[Mocked content extracted from ${file.name}]`);
+      setUploadMessage(`Image received. Extracting text from ${file.name}...`);
+      onAnalyzeImage?.(file);
       return;
     }
     if (!isTxt && !isDocx) {
@@ -78,7 +80,7 @@ export function TextAnalysisEditor({
       <div className="flex flex-col items-center gap-3 text-center">
         <div>
           <h1 id="editor-heading" className="text-2xl font-black tracking-[0.015em] sm:text-3xl">Check Taglish content</h1>
-          <p className="mt-1 text-sm text-muted">Paste election-related content or import a document/image for a mock OCR-ready flow.</p>
+          <p className="mt-1 text-sm text-muted">Paste election-related content or import a document/image for backend-assisted analysis.</p>
         </div>
       </div>
       <div className="mt-5 flex flex-wrap items-center justify-center gap-3 lg:justify-between">
@@ -188,7 +190,7 @@ export function TextAnalysisEditor({
           <div>
             <ImageUp className="mx-auto h-9 w-9 text-primary" aria-hidden="true" />
             <h2 className="mt-4 text-xl font-semibold">Upload an image with text</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm text-muted">Drag a screenshot or social media image here. OCR is mocked for now, but the interface is ready for backend extraction.</p>
+            <p className="mx-auto mt-2 max-w-md text-sm text-muted">Drag a screenshot or social media image here. Text extraction and analysis run through the backend.</p>
             <Button variant="secondary" className="mt-5" onClick={() => fileRef.current?.click()}>
               Choose image
             </Button>

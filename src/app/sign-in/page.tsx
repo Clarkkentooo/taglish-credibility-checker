@@ -4,7 +4,7 @@ export default function SignInPage() {
   return (
     <AuthPage
       title="Sign in"
-      description="Authentication is mocked for this frontend milestone. Use any email and password to enter the demo dashboard."
+      description="Authentication is mocked for this milestone. Use demo@tsek.local / demo123 to open seeded demo data, or any other email to use your local session."
       describedBy="auth-demo-note"
       googleLabel="Sign in with Google"
       fields={[
@@ -23,7 +23,7 @@ export default function SignInPage() {
           placeholder: "Any password",
         },
       ]}
-      submitLabel="Continue to demo dashboard"
+      submitLabel="Continue"
       footerText="New here?"
       footerHref="/sign-up"
       footerLinkLabel="Create a demo account"

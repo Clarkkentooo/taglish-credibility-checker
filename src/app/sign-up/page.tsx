@@ -4,7 +4,7 @@ export default function SignUpPage() {
   return (
     <AuthPage
       title="Create an account"
-      description="Saved analyses are mocked until backend authentication is connected. Create a demo profile and continue to the dashboard."
+      description="Account creation is mocked for this milestone. Continue to a local browser session without seeded demo data."
       describedBy="signup-demo-note"
       googleLabel="Sign up with Google"
       fields={[

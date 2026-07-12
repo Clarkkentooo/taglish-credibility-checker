@@ -10,7 +10,7 @@ import { AnalysisResults } from "@/components/results/AnalysisResults";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
 import { Button } from "@/components/ui/button";
-import { analyzeText } from "@/lib/api/analysis";
+import { analyzeImage, analyzeText } from "@/lib/api/analysis";
 import { mockAnalyses } from "@/lib/mocks/analyses";
 import { cn } from "@/lib/utils";
 import type { AnalysisResult } from "@/types/analysis";
@@ -98,6 +98,50 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
     }
   }
 
+  async function runImageAnalysis(file: File) {
+    setError("");
+    setLoading(true);
+    setToasts([
+      {
+        id: "image-analysis-loading",
+        title: "Reading image",
+        description: "Extracting text and checking the content.",
+        status: "loading",
+        duration: 0,
+      },
+    ]);
+    try {
+      const base64Image = await fileToBase64(file);
+      const next = await analyzeImage(base64Image, file.type);
+      setText(next.extractedText);
+      setResult(next);
+      setPendingSample(null);
+      setResultsOpen(true);
+      setToasts([
+        {
+          id: `image-analysis-ready-${next.id}`,
+          title: "Image results ready",
+          description: "Extracted text and analysis are ready to review.",
+          status: "success",
+          duration: 4200,
+        },
+      ]);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Image analysis failed.");
+      setToasts([
+        {
+          id: "image-analysis-error",
+          title: "Image analysis failed",
+          description: caught instanceof Error ? caught.message : "Image analysis failed.",
+          status: "error",
+          duration: 5200,
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function loadSample() {
     const samples = mockAnalyses.slice(0, 5);
     const sample = samples[sampleIndex % samples.length];
@@ -166,11 +210,12 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
         </Drawer>
       </div>
       <div className="mx-auto w-full max-w-3xl space-y-4 pt-10 xl:pt-0">
-        {!online ? <ErrorState title="Offline mode" description="You appear to be offline. Mock history remains visible, but analysis may not complete." /> : null}
+        {!online ? <ErrorState title="Offline mode" description="You appear to be offline. Local history remains visible, but analysis may not complete." /> : null}
         <TextAnalysisEditor
           value={text}
           onChange={updateText}
           onAnalyze={() => void runAnalysis()}
+          onAnalyzeImage={(file) => void runImageAnalysis(file)}
           onLoadSample={loadSample}
           loading={loading}
           result={result}
@@ -183,6 +228,22 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
       ) : null}
     </div>
   );
+}
+
+function fileToBase64(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result !== "string") {
+        reject(new Error("Could not read image file."));
+        return;
+      }
+      resolve(result.split(",")[1] ?? result);
+    };
+    reader.onerror = () => reject(new Error("Could not read image file."));
+    reader.readAsDataURL(file);
+  });
 }
 
 function ResultPanelContent({

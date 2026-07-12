@@ -8,7 +8,8 @@ import { ErrorState } from "@/components/states/ErrorState";
 import { Skeleton } from "@/components/states/Skeleton";
 import { HistoryCard } from "@/components/history/HistoryCard";
 import { HistoryTable } from "@/components/history/HistoryTable";
-import { deleteAnalysis, getAnalyses } from "@/lib/api/analysis";
+import { deleteAnalysis, getAnalyses, renameAnalysis } from "@/lib/api/analysis";
+import { getSessionMode, type SessionMode } from "@/lib/session";
 import type { AnalysisResult, AnalysisStatus } from "@/types/analysis";
 
 type Sort = "newest" | "oldest" | "confidence";
@@ -23,8 +24,10 @@ export function HistoryClient() {
   const [sort, setSort] = useState<Sort>("newest");
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
+  const [mode, setMode] = useState<SessionMode>("user");
 
   useEffect(() => {
+    setMode(getSessionMode());
     getAnalyses()
       .then(setAnalyses)
       .catch((caught) => setError(caught instanceof Error ? caught.message : "Could not load history."))
@@ -48,12 +51,15 @@ export function HistoryClient() {
     await deleteAnalysis(pendingDelete);
     setAnalyses((items) => items.filter((item) => item.id !== pendingDelete));
     setPendingDelete(null);
-    setNotice("Analysis deleted in mock mode.");
+    setNotice(mode === "demo" ? "Analysis deleted for this demo session." : "Analysis deleted from local history.");
   }
 
-  function rename(id: string) {
-    setAnalyses((items) => items.map((item) => (item.id === id ? { ...item, title: `${item.title} (renamed)` } : item)));
-    setNotice("Analysis renamed in mock mode.");
+  async function rename(id: string) {
+    const item = analyses.find((analysis) => analysis.id === id);
+    const title = `${item?.title ?? "Analysis"} (renamed)`;
+    await renameAnalysis(id, title);
+    setAnalyses((items) => items.map((analysis) => (analysis.id === id ? { ...analysis, title } : analysis)));
+    setNotice(mode === "demo" ? "Analysis renamed for this demo session." : "Analysis renamed in local history.");
   }
 
   if (loading) {
@@ -97,10 +103,10 @@ export function HistoryClient() {
         <EmptyState title="No analyses found" description="Try another search or result filter." />
       ) : (
         <>
-          <HistoryTable analyses={filtered} onDelete={setPendingDelete} onRename={rename} />
+          <HistoryTable analyses={filtered} onDelete={setPendingDelete} onRename={(id) => void rename(id)} />
           <div className="grid gap-3 md:hidden">
             {filtered.map((analysis) => (
-              <HistoryCard key={analysis.id} analysis={analysis} onDelete={setPendingDelete} onRename={rename} />
+              <HistoryCard key={analysis.id} analysis={analysis} onDelete={setPendingDelete} onRename={(id) => void rename(id)} />
             ))}
           </div>
         </>
@@ -109,7 +115,7 @@ export function HistoryClient() {
         <div className="fixed inset-0 z-50 grid place-items-center bg-ink/40 p-4" role="dialog" aria-modal="true" aria-labelledby="delete-title">
           <Card className="max-w-sm p-5">
             <h2 id="delete-title" className="text-lg font-semibold">Delete analysis?</h2>
-            <p className="mt-2 text-sm text-muted">This removes the item from mock history for this session.</p>
+            <p className="mt-2 text-sm text-muted">{mode === "demo" ? "This removes the item from demo history for this session." : "This removes the item from local browser history."}</p>
             <div className="mt-5 flex justify-end gap-2">
               <Button variant="secondary" onClick={() => setPendingDelete(null)}>Cancel</Button>
               <Button variant="danger" onClick={() => void confirmDelete()}>Delete</Button>

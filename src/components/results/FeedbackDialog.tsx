@@ -22,7 +22,7 @@ export function FeedbackDialog({ analysisId }: { analysisId: string }) {
 
   async function quickFeedback(helpful: boolean) {
     await sendFeedback(analysisId, { helpful });
-    setMessage(helpful ? "Thanks. Marked as helpful in mock mode." : "Thanks. Marked as not helpful in mock mode.");
+    setMessage(helpful ? "Thanks. Marked as helpful for this session." : "Thanks. Marked as not helpful for this session.");
   }
 
   async function onSubmit(values: FeedbackForm) {
@@ -30,7 +30,7 @@ export function FeedbackDialog({ analysisId }: { analysisId: string }) {
       correctedLabel: values.correctedLabel === "" ? undefined : (values.correctedLabel as AnalysisStatus | undefined),
       note: values.note,
     });
-    setMessage("Report submitted in mock mode.");
+    setMessage("Report submitted for this session.");
     reset();
     setOpen(false);
   }
