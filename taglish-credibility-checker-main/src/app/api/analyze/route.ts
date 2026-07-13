@@ -5,9 +5,9 @@ import { brand } from "@/config/brand";
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = "llama-3.3-70b-versatile";
-const FLASK_URL = process.env.FLASK_API_URL ?? "http://127.0.0.1:5000";
+const FASTAPI_URL = process.env.FLASK_API_URL ?? "http://127.0.0.1:8000";
 
-interface FlaskResult {
+interface FastAPIResult {
   label: "suspicious" | "not_suspicious";
   suspicious_probability: number;
   not_suspicious_probability: number;
@@ -29,20 +29,16 @@ interface GroqSpan {
   explanation: string;
 }
 
-function mapStatus(label: FlaskResult["label"]): AnalysisStatus {
+interface GroqInterpretation {
+  summary: string;
+  spans: GroqSpan[];
+}
+
+function mapStatus(label: FastAPIResult["label"]): AnalysisStatus {
   return label === "suspicious" ? "not_credible" : "credible";
 }
 
-function buildModelScores(flask: FlaskResult): ModelScore[] {
-  return [{
-    model: "XLM-RoBERTa (TsekTxt)",
-    credibleProbability: parseFloat(flask.not_suspicious_probability.toFixed(3)),
-    notCredibleProbability: parseFloat(flask.suspicious_probability.toFixed(3)),
-  }];
-}
-
-function buildSpans(sourceText: string, groqSpans: GroqSpan[], tokenAttributions: FlaskResult["tokenAttributions"]): HighlightedSpan[] {
-  // Try Groq spans first
+function buildSpans(sourceText: string, groqSpans: GroqSpan[], tokenAttributions: FastAPIResult["tokenAttributions"]): HighlightedSpan[] {
   const resolved: HighlightedSpan[] = [];
   for (const span of groqSpans) {
     const start = sourceText.indexOf(span.phrase);
@@ -60,7 +56,6 @@ function buildSpans(sourceText: string, groqSpans: GroqSpan[], tokenAttributions
   }
   if (resolved.length) return resolved;
 
-  // Fall back to token attributions from the model
   if (tokenAttributions.length) {
     return tokenAttributions.map((attr) => ({
       id: `${attr.text.toLowerCase().replace(/\W+/g, "-")}-${attr.start}`,
@@ -87,45 +82,32 @@ function buildSpans(sourceText: string, groqSpans: GroqSpan[], tokenAttributions
   }];
 }
 
-interface GroqVerdict {
-  status: AnalysisStatus;
-  confidence: number;
-  summary: string;
-  spans: GroqSpan[];
-}
+// Groq is interpreter only — uses the model's verdict, just explains it
+async function getGroqInterpretation(sourceText: string, fastapi: FastAPIResult): Promise<GroqInterpretation> {
+  const fallbackSummary = `The text was classified as ${fastapi.label.replace("_", " ")} with ${fastapi.confidence}% confidence by the XLM-RoBERTa model.`;
+  if (!GROQ_API_KEY) return { summary: fallbackSummary, spans: [] };
 
-async function getGroqEnrichment(sourceText: string, flask: FlaskResult): Promise<GroqVerdict> {
-  const fallback: GroqVerdict = {
-    status: mapStatus(flask.label),
-    confidence: flask.confidence,
-    summary: `The text was classified as ${flask.label.replace("_", " ")} with ${flask.confidence}% confidence.`,
-    spans: [],
-  };
-  if (!GROQ_API_KEY) return fallback;
-
-  const tokenList = flask.tokenAttributions
+  const tokenList = fastapi.tokenAttributions
     .map((t) => `"${t.text}" (${t.direction.replace("_", " ")}, weight ${t.weight})`)
     .join(", ");
 
-  const prompt = `A fine-tuned XLM-RoBERTa model classified this Taglish text as "${flask.label.replace("_", " ")}" with ${flask.confidence}% confidence.
+  const prompt = `A fine-tuned XLM-RoBERTa model (chimsio/tsektxt-xlmr) has classified this Taglish text as "${fastapi.label.replace("_", " ")}" with ${fastapi.confidence}% confidence.
 
 Top influential tokens from Integrated Gradients: ${tokenList || "none"}
 
 Text analyzed:
 "${sourceText}"
 
-Independently assess this text for misinformation signals. Respond with ONLY a valid JSON object, no markdown, no code fences:
+Your job is to EXPLAIN this verdict to a Filipino user — do NOT override or second-guess the model's classification. Respond with ONLY a valid JSON object, no markdown, no code fences:
 {
-  "status": "credible" | "not_credible" | "uncertain",
-  "confidence": <integer 0-100>,
-  "summary": "<1-2 plain English sentences explaining your verdict to a Filipino user, referencing specific parts of the text>",
+  "summary": "<1-2 plain English sentences explaining WHY the model classified it this way, referencing specific phrases from the text>",
   "highlightedSpans": [
     {
       "phrase": "<exact substring from the text>",
       "category": "political_entity" | "election_term" | "taglish_expression" | "linguistic_pattern",
       "direction": "credible" | "not_credible",
       "weight": <0.0-1.0>,
-      "explanation": "<one sentence why this phrase matters>"
+      "explanation": "<one sentence why this phrase matters for the classification>"
     }
   ]
 }
@@ -149,15 +131,13 @@ Include 2-5 highlighted spans. Each phrase must be an exact substring of the inp
     const json = await res.json() as { choices?: Array<{ message?: { content?: string } }> };
     const raw = json.choices?.[0]?.message?.content ?? "";
     const cleaned = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
-    const parsed = JSON.parse(cleaned) as { status: AnalysisStatus; confidence: number; summary: string; highlightedSpans: GroqSpan[] };
+    const parsed = JSON.parse(cleaned) as { summary: string; highlightedSpans: GroqSpan[] };
     return {
-      status: parsed.status ?? fallback.status,
-      confidence: parsed.confidence ?? fallback.confidence,
-      summary: parsed.summary ?? fallback.summary,
+      summary: parsed.summary ?? fallbackSummary,
       spans: parsed.highlightedSpans ?? [],
     };
   } catch {
-    return fallback;
+    return { summary: fallbackSummary, spans: [] };
   }
 }
 
@@ -173,47 +153,35 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  // Step 1: Call Flask model
-  let flask: FlaskResult;
+  // Step 1: FastAPI model — primary verdict
+  let fastapi: FastAPIResult;
   try {
-    const flaskRes = await fetch(`${FLASK_URL}/analyze`, {
+    const fastapiRes = await fetch(`${FASTAPI_URL}/analyze`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: sourceText }),
     });
-    if (!flaskRes.ok) {
-      const err = await flaskRes.text();
+    if (!fastapiRes.ok) {
+      const err = await fastapiRes.text();
       return NextResponse.json({ error: `Model API error: ${err}` }, { status: 502 });
     }
-    flask = await flaskRes.json() as FlaskResult;
+    fastapi = await fastapiRes.json() as FastAPIResult;
   } catch {
     return NextResponse.json(
-      { error: "Could not reach the model server. Make sure the Flask API is running on port 5000." },
+      { error: "Could not reach the model server. Make sure the FastAPI backend is running on port 8000." },
       { status: 502 }
     );
   }
 
-  // Step 2: Get Groq verdict + summary + highlighted spans
-  const groq = await getGroqEnrichment(sourceText, flask);
+  // Step 2: Groq — interpretation only, model verdict is final
+  const groq = await getGroqInterpretation(sourceText, fastapi);
 
-  // Use Groq as the primary verdict, model as secondary
-  const status = groq.status;
-  const modelScores: ModelScore[] = [
-    {
-      model: "XLM-RoBERTa (TsekTxt Model)",
-      credibleProbability: parseFloat(flask.not_suspicious_probability.toFixed(3)),
-      notCredibleProbability: parseFloat(flask.suspicious_probability.toFixed(3)),
-    },
-    {
-      model: "Groq LLaMA 3.3 (Language Analysis)",
-      credibleProbability: groq.status === "credible" ? groq.confidence / 100 : 1 - groq.confidence / 100,
-      notCredibleProbability: groq.status !== "credible" ? groq.confidence / 100 : 1 - groq.confidence / 100,
-    },
-  ];
-
-  const agreeing = modelScores.filter((s) =>
-    status === "credible" ? s.credibleProbability > 0.5 : s.notCredibleProbability > 0.5
-  ).length;
+  const status = mapStatus(fastapi.label);
+  const modelScores: ModelScore[] = [{
+    model: "XLM-RoBERTa (TsekTxt)",
+    credibleProbability: parseFloat(fastapi.not_suspicious_probability.toFixed(3)),
+    notCredibleProbability: parseFloat(fastapi.suspicious_probability.toFixed(3)),
+  }];
 
   const result: AnalysisResult = {
     id: `ana-${Math.random().toString(36).slice(2, 9)}`,
@@ -221,10 +189,10 @@ export async function POST(request: Request) {
     title: sourceText.slice(0, 44) || "Untitled analysis",
     sourceText,
     status,
-    confidence: groq.confidence,
-    modelAgreement: Math.min(3, Math.max(1, agreeing)) as 1 | 2 | 3,
+    confidence: fastapi.confidence,
+    modelAgreement: 1,
     modelScores,
-    highlightedSpans: buildSpans(sourceText, groq.spans, flask.tokenAttributions),
+    highlightedSpans: buildSpans(sourceText, groq.spans, fastapi.tokenAttributions),
     summary: groq.summary,
     disclaimer: brand.disclaimer,
   };

@@ -3,7 +3,7 @@ import type { ModelScore } from "@/types/analysis";
 export function ModelComparison({ scores }: { scores: ModelScore[] }) {
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted">Compare the verdict from the fine-tuned XLM-RoBERTa model against Groq language analysis.</p>
+      <p className="text-sm text-muted">Classification is powered by a fine-tuned XLM-RoBERTa model (chimsio/tsektxt-xlmr) trained on Taglish social media content. Groq LLaMA 3.3 provides the plain-language explanation only.</p>
       {scores.map((score) => (
         <div key={score.model}>
           <div className="mb-1 flex justify-between text-sm">

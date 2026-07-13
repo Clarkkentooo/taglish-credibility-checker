@@ -224,19 +224,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not reach the model server. Make sure the FastAPI backend is running on port 8000." }, { status: 502 });
   }
 
-  // Step 3: Groq verdict + explanation + highlights
+  // Step 3: Groq interpretation — explains the model's verdict
   const groq = await getGroqVerdict(sourceText, fastapi);
+
+  const status = mapStatus(fastapi.label);
 
   const modelScores: ModelScore[] = [
     {
-      model: "XLM-RoBERTa (TsekTxt Model)",
+      model: "XLM-RoBERTa (TsekTxt)",
       credibleProbability: parseFloat(fastapi.not_suspicious_probability.toFixed(3)),
       notCredibleProbability: parseFloat(fastapi.suspicious_probability.toFixed(3)),
-    },
-    {
-      model: "Groq LLaMA 3.3 (Language Analysis)",
-      credibleProbability: groq.status === "credible" ? groq.confidence / 100 : 1 - groq.confidence / 100,
-      notCredibleProbability: groq.status !== "credible" ? groq.confidence / 100 : 1 - groq.confidence / 100,
     },
   ];
 
@@ -249,9 +246,9 @@ export async function POST(request: Request) {
     createdAt: new Date().toISOString(),
     title: sourceText.slice(0, 44) || "Image analysis",
     sourceText,
-    status: groq.status,
-    confidence: groq.confidence,
-    modelAgreement: Math.min(3, Math.max(1, agreeing)) as 1 | 2 | 3,
+    status,
+    confidence: fastapi.confidence,
+    modelAgreement: 1,
     modelScores,
     highlightedSpans: buildSpans(sourceText, groq.spans, fastapi.tokenAttributions),
     summary: groq.summary,
