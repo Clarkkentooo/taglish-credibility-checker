@@ -11,12 +11,12 @@ export const appNavigation = [
   { href: "/dashboard/checker", label: "New analysis", icon: Sparkles },
   { href: "/dashboard/history", label: "History", icon: Clock3 },
   { href: "/dashboard/saved", label: "Saved", icon: Bookmark },
-  { href: "/methodology", label: "Methods", icon: BookOpen },
+  { href: "/dashboard/methods", label: "Methods", icon: BookOpen },
 ];
 
 export const dashboardStats = [
-  { label: "Total analyses", key: "total", icon: BarChart3 },
-  { label: "Not suspicious", key: "credible", icon: BarChart3 },
-  { label: "Highly suspicious", key: "notCredible", icon: BarChart3 },
-  { label: "Suspicious", key: "uncertain", icon: BarChart3 },
+  { label: "Total analyses", key: "total", icon: BarChart3, imageSrc: "/caps-illus/dashboard/total-analyses.svg" },
+  { label: "Not suspicious", key: "credible", icon: BarChart3, imageSrc: "/caps-illus/dashboard/not-suspicious.svg" },
+  { label: "Highly suspicious", key: "notCredible", icon: BarChart3, imageSrc: "/caps-illus/dashboard/highly-suspicious.svg" },
+  { label: "Suspicious", key: "uncertain", icon: BarChart3, imageSrc: "/caps-illus/dashboard/suspicious.svg" },
 ] as const;

@@ -9,12 +9,12 @@ import { cn } from "@/lib/utils";
 
 export function MarketingHeader() {
   const [visible, setVisible] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => typeof window !== "undefined" && localStorage.getItem("tsektxt_logged_in") === "true"
+  );
   const lastY = useRef(0);
 
   useEffect(() => {
-    setIsLoggedIn(localStorage.getItem("tsektxt_logged_in") === "true");
-
     function handleScroll() {
       const currentY = window.scrollY;
       const scrollingUp = currentY < lastY.current;

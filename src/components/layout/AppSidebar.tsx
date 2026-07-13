@@ -23,11 +23,11 @@ export function AppSidebar() {
             <button
               type="button"
               aria-label="Expand sidebar"
-              className="rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+              className="grid h-10 w-10 place-items-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
               onClick={() => setCollapsed(false)}
             >
               <span
-                className="block h-9 w-9 bg-ink"
+                className="block h-7 w-7 bg-ink"
                 aria-hidden="true"
                 style={{
                   WebkitMask: "url(/main-logo.svg) center / contain no-repeat",
@@ -82,7 +82,7 @@ export function DashboardNavLinks({
             aria-current={active ? "page" : undefined}
             className={cn(
               "flex min-h-10 items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
-              collapsed ? "justify-center px-0" : "gap-3 px-3",
+              collapsed ? "mx-auto w-10 justify-center px-0" : "gap-3 px-3",
               active && "bg-ink text-white shadow-sm hover:bg-ink hover:text-white",
             )}
           >
@@ -124,12 +124,12 @@ export function AccountSettingsLink({
         aria-current={pathname === "/dashboard/settings" ? "page" : undefined}
         className={cn(
           "flex min-h-10 items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
-          collapsed ? "justify-center px-0" : "gap-3 px-3",
+          collapsed ? "mx-auto w-10 justify-center px-0" : "gap-3 px-3",
           pathname === "/dashboard/settings" && "bg-ink text-white shadow-sm hover:bg-ink hover:text-white",
         )}
       >
-        <UserCircle2 className="h-7 w-7 shrink-0" aria-hidden="true" />
-        <span className={cn("min-w-0 flex-1 whitespace-nowrap transition-[opacity,transform,width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "w-0 translate-x-3 opacity-0" : "w-auto translate-x-0 opacity-100")}>
+        <UserCircle2 className="h-5 w-5 shrink-0" aria-hidden="true" />
+        <span className={cn("whitespace-nowrap transition-[opacity,transform,width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "w-0 translate-x-3 opacity-0" : "min-w-0 flex-1 w-auto translate-x-0 opacity-100")}>
           Account
         </span>
         {!collapsed ? <MoreHorizontal className="h-4 w-4 shrink-0" aria-hidden="true" /> : null}
@@ -140,7 +140,7 @@ export function AccountSettingsLink({
         onClick={() => void handleSignOut()}
         className={cn(
           "flex min-h-10 w-full items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
-          collapsed ? "justify-center px-0" : "gap-3 px-3",
+          collapsed ? "mx-auto w-10 justify-center px-0" : "gap-3 px-3",
         )}
       >
         <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />

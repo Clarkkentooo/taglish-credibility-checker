@@ -1,5 +1,8 @@
 import { createBrowserClient } from "@supabase/ssr";
 
+type BrowserSupabaseClient = ReturnType<typeof createBrowserClient>;
+type MockSignUpOptions = { data?: { full_name?: string } };
+
 export function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -24,7 +27,7 @@ export function createClient() {
           }
           return { data: { user: null }, error: null };
         },
-        async signUp({ email, password, options }: { email: string; password?: string; options?: any }) {
+        async signUp({ email, options }: { email: string; password?: string; options?: MockSignUpOptions }) {
           if (typeof window !== "undefined") {
             localStorage.setItem("tsektxt_logged_in", "true");
             localStorage.setItem(
@@ -35,7 +38,7 @@ export function createClient() {
           }
           return { data: { user: { id: "mock-user-id", email } }, error: null };
         },
-        async signInWithPassword({ email, password }: { email: string; password?: string }) {
+        async signInWithPassword({ email }: { email: string; password?: string }) {
           if (typeof window !== "undefined") {
             localStorage.setItem("tsektxt_logged_in", "true");
             localStorage.setItem("tsektxt_user", JSON.stringify({ email, full_name: "Demo reviewer" }));
@@ -52,7 +55,7 @@ export function createClient() {
           return { error: null };
         },
       },
-    } as any;
+    } as unknown as BrowserSupabaseClient;
   }
 
   return createBrowserClient(url, anonKey);

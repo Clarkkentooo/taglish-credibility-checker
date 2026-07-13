@@ -40,7 +40,8 @@ export function TextAnalysisEditor({
   // so the user can see and edit the extracted text
   useEffect(() => {
     if (inputMode === "image" && value && result) {
-      setInputMode("text");
+      const timer = window.setTimeout(() => setInputMode("text"), 0);
+      return () => window.clearTimeout(timer);
     }
   }, [value, result, inputMode]);
 
@@ -48,7 +49,7 @@ export function TextAnalysisEditor({
   const uploadDescription =
     inputMode === "image"
       ? "Attach an image file with readable text. Text will be extracted automatically."
-      : "Attach `.txt` or `.docx` files. Document parsing is mocked for now.";
+      : "Attach `.txt` or `.docx` files.";
   const UploadIcon = inputMode === "image" ? ImageUp : FileText;
 
   function handleFile(file: File) {
@@ -208,7 +209,7 @@ export function TextAnalysisEditor({
             <ImageUp className="mx-auto h-9 w-9 text-primary" aria-hidden="true" />
             <h2 className="mt-4 text-xl font-semibold">Upload an image with text</h2>
             <p className="mx-auto mt-2 max-w-md text-sm text-muted">Drag a screenshot or social media image here. The text will be extracted and shown for review before analysis.</p>
-            <Button variant="secondary" className="mt-5" onClick={() => fileRef.current?.click()} disabled={loading}>
+            <Button variant="secondary" className="mt-5 hover:bg-primary hover:text-white focus-visible:bg-primary focus-visible:text-white" onClick={() => fileRef.current?.click()} disabled={loading}>
               {loading ? "Extracting text…" : "Choose image"}
             </Button>
           </div>
@@ -238,7 +239,7 @@ export function TextAnalysisEditor({
             <p className="text-xs text-muted">{uploadDescription}</p>
           </div>
           <input ref={fileRef} type="file" accept={uploadAccept} className="sr-only" onChange={onFileChange} aria-label={inputMode === "image" ? "Upload image" : "Upload document"} />
-          <Button variant="secondary" className="whitespace-nowrap" onClick={() => fileRef.current?.click()}>
+          <Button variant="secondary" className="whitespace-nowrap hover:bg-primary hover:text-white focus-visible:bg-primary focus-visible:text-white" onClick={() => fileRef.current?.click()}>
             <UploadIcon className="mr-2 h-4 w-4" aria-hidden="true" />
             {inputMode === "image" ? "Upload image" : "Upload file"}
           </Button>

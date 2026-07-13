@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { Plus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ButtonLink } from "@/components/ui/button";
 import { Skeleton } from "@/components/states/Skeleton";
@@ -30,9 +32,9 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto w-full space-y-6 lg:w-1/2">
+      <div className="mx-auto w-full max-w-4xl space-y-6">
         <Skeleton className="h-28 w-full" />
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <Skeleton className="h-24 w-full" />
           <Skeleton className="h-24 w-full" />
         </div>
@@ -42,23 +44,25 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="mx-auto w-full space-y-6 lg:w-1/2">
+    <div className="mx-auto w-full max-w-4xl space-y-6">
       <section className="flex flex-col gap-4 rounded-[1.75rem] border border-white/70 bg-white/78 p-5 shadow-soft backdrop-blur-xl sm:p-6 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-sm font-semibold text-primary">Demo dashboard</p>
           <h1 className="mt-2 text-4xl font-black tracking-[0.015em]">Welcome back.</h1>
           <p className="mt-2 text-muted">Start a new suspiciousness check or revisit recent results.</p>
         </div>
-        <ButtonLink href="/dashboard/checker" className="w-full sm:w-auto">New analysis</ButtonLink>
+        <ButtonLink href="/dashboard/checker" className="w-full gap-2 whitespace-nowrap sm:w-auto">
+          <Plus className="h-4 w-4 shrink-0" aria-hidden="true" />
+          New analysis
+        </ButtonLink>
       </section>
-      <section className="grid gap-4 sm:grid-cols-2">
+      <section className="grid grid-cols-2 gap-3 sm:gap-4">
         {dashboardStats.map((stat) => {
-          const Icon = stat.icon;
           return (
-            <Card key={stat.key} className="p-5">
-              <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
-              <p className="mt-4 text-sm text-muted">{stat.label}</p>
-              <p className="mt-2 text-3xl font-bold">{counts[stat.key as keyof typeof counts]}</p>
+            <Card key={stat.key} className="min-h-32 p-3 sm:p-5">
+              <Image src={stat.imageSrc} alt="" width={48} height={48} className="h-11 w-11 object-contain sm:h-12 sm:w-12" aria-hidden="true" />
+              <p className="mt-3 text-sm leading-snug text-muted sm:mt-4">{stat.label}</p>
+              <p className="mt-1 text-3xl font-bold sm:mt-2">{counts[stat.key as keyof typeof counts]}</p>
             </Card>
           );
         })}

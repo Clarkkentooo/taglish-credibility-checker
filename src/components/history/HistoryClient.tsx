@@ -72,9 +72,9 @@ export function HistoryClient() {
   if (error) return <ErrorState title="History unavailable" description={error} />;
 
   return (
-    <div className="mx-auto w-full space-y-4 lg:w-1/2">
-      <Card className="grid gap-2 p-3 md:grid-cols-[1fr_145px_130px]">
-        <label className="text-xs font-medium">
+    <div className="mx-auto w-full max-w-4xl space-y-4">
+      <Card className="grid grid-cols-2 gap-2 p-3 md:grid-cols-[1fr_145px_130px]">
+        <label className="col-span-2 text-xs font-medium md:col-span-1">
           Search
           <input className="mt-1.5 min-h-9 w-full rounded-full border border-white/80 bg-white/65 px-3 text-sm" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search title or excerpt" />
         </label>

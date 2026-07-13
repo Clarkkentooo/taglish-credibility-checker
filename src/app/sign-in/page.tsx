@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
@@ -31,43 +32,56 @@ export default function SignInPage() {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center px-4 py-10">
-      <Card className="w-full max-w-md p-6 shadow-glow">
-         <BrandLogo />
-        <h1 className="mt-8 text-3xl font-black tracking-[0.015em]">Sign in</h1>
-        <p className="mt-2 text-sm text-muted">Welcome back. Sign in to access your analysis history.</p>
-        <form className="mt-6 space-y-4" onSubmit={(e) => void handleSubmit(e)}>
-          <label className="block text-sm font-medium">
-            Email
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4"
-              placeholder="you@example.com"
-            />
-          </label>
-          <label className="block text-sm font-medium">
-            Password
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4"
-              placeholder="••••••••"
-            />
-          </label>
-          {error ? <p className="text-sm text-red-500" role="alert">{error}</p> : null}
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Signing in…" : "Sign in"}
-          </Button>
-        </form>
-        <p className="mt-5 text-sm text-muted">
-          New here? <Link href="/sign-up" className="font-semibold text-primary">Create an account</Link>
-        </p>
-      </Card>
+    <main className="relative h-[100dvh] overflow-hidden bg-white">
+      <Image
+        src="/caps-illus/signin-illustration.svg"
+        alt=""
+        width={1600}
+        height={1200}
+        priority
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-[-26dvh] left-[-14vw] h-[58dvh] w-[128vw] max-w-none object-cover object-bottom sm:bottom-[-24dvh] sm:h-[64dvh] lg:bottom-auto lg:left-[-2.5vw] lg:top-[-8vh] lg:h-[120vh] lg:w-[69vw] lg:object-cover lg:object-left-top"
+      />
+      <div className="relative z-10 flex h-full items-center justify-center px-4 py-4 sm:px-6 lg:justify-end lg:px-[10vw]">
+        <Card className="w-full max-w-[34rem] overflow-hidden rounded-[1.75rem] border-white/75 bg-white p-5 shadow-soft sm:p-8 lg:max-w-[30rem]">
+          <BrandLogo />
+          <h1 className="mt-6 text-4xl font-black tracking-[0.015em] sm:mt-8">Sign in</h1>
+          <p className="mt-2 text-sm leading-6 text-muted sm:text-base">
+            Welcome back. Sign in to access your analysis history.
+          </p>
+          <form className="mt-6 space-y-4" onSubmit={(e) => void handleSubmit(e)}>
+            <label className="block text-sm font-semibold">
+              Email
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-2 min-h-11 w-full rounded-full border border-transparent bg-white/40 px-4 text-base text-ink transition placeholder:text-muted/55 focus:border-primary focus:bg-white"
+                placeholder="you@example.com"
+              />
+            </label>
+            <label className="block text-sm font-semibold">
+              Password
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-2 min-h-11 w-full rounded-full border border-transparent bg-white/40 px-4 text-base text-ink transition placeholder:text-muted/55 focus:border-primary focus:bg-white"
+                placeholder="Password"
+              />
+            </label>
+            {error ? <p className="text-sm text-red-500" role="alert">{error}</p> : null}
+            <Button type="submit" className="mt-2 w-full" disabled={loading}>
+              {loading ? "Signing in..." : "Sign in"}
+            </Button>
+          </form>
+          <p className="mt-5 text-sm text-muted">
+            New here? <Link href="/sign-up" className="font-semibold text-primary">Create an account</Link>
+          </p>
+        </Card>
+      </div>
     </main>
   );
 }
