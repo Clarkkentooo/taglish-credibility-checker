@@ -4,5 +4,13 @@ out
 coverage
 playwright-report
 test-results
+.runtime
+taglish-credibility-checker-main
 .env*.local
 *.tsbuildinfo
+venv
+.venv
+fastapi-backend/venv
+__pycache__
+*.pyc
+*.log

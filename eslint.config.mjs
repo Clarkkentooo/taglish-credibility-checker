@@ -4,7 +4,7 @@ import tseslint from "typescript-eslint";
 
 const eslintConfig = [
   {
-    ignores: [".next/**", "node_modules/**", "playwright-report/**", "coverage/**"],
+    ignores: [".next/**", "**/.next/**", "node_modules/**", "**/node_modules/**", "playwright-report/**", "coverage/**", ".runtime/**", "taglish-credibility-checker-main/**", "**/__pycache__/**", "**/*.pyc"],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

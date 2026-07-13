@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PanelRightClose, PanelRightOpen } from "lucide-react";
+import { AlertTriangle, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { AnimatedToastStack, type AnimatedToast } from "@/components/beui/animated-toast-stack";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/beui/drawer";
 import { AnalysisProgress } from "@/components/checker/AnalysisProgress";
@@ -10,10 +10,25 @@ import { AnalysisResults } from "@/components/results/AnalysisResults";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
 import { Button } from "@/components/ui/button";
-import { analyzeText } from "@/lib/api/analysis";
+import { analyzeText, analyzeImage } from "@/lib/api/analysis";
 import { mockAnalyses } from "@/lib/mocks/analyses";
 import { cn } from "@/lib/utils";
 import type { AnalysisResult } from "@/types/analysis";
+
+const isMockMode = process.env.NEXT_PUBLIC_USE_MOCK_API !== "false";
+
+function MockModeBanner() {
+  if (!isMockMode) return null;
+  return (
+    <div className="flex items-center gap-2 rounded-xl border border-caution/30 bg-caution/8 px-4 py-2.5 text-sm text-caution">
+      <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
+      <span>
+        <strong>Mock mode active</strong> — analysis uses synthetic data, not the trained model.
+        Set <code className="rounded bg-caution/10 px-1 py-0.5 text-xs font-mono">NEXT_PUBLIC_USE_MOCK_API=false</code> to use real analysis.
+      </span>
+    </div>
+  );
+}
 
 export function CheckerWorkspace({ initialText = "" }: { initialText?: string }) {
   const [text, setText] = useState(initialText);
@@ -98,6 +113,49 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
     }
   }
 
+  async function runImageAnalysis(base64Image: string, mimeType: string) {
+    setError("");
+    setLoading(true);
+    setToasts([
+      {
+        id: "image-loading",
+        title: "Extracting text from image",
+        description: "OCR is processing your image. The extracted text will appear in the editor.",
+        status: "loading",
+        duration: 0,
+      },
+    ]);
+    try {
+      const next = await analyzeImage(base64Image, mimeType);
+      // Populate the extracted text into the editor so the user can review/edit
+      setText(next.extractedText);
+      setResult(next);
+      setPendingSample(null);
+      setToasts([
+        {
+          id: `image-ready-${next.id}`,
+          title: "Image text extracted & analyzed",
+          description: "The extracted text is now in the editor. You can edit it and re-analyze if needed.",
+          status: "success",
+          duration: 5000,
+        },
+      ]);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Image analysis failed.");
+      setToasts([
+        {
+          id: "image-error",
+          title: "Image analysis failed",
+          description: caught instanceof Error ? caught.message : "Image analysis failed.",
+          status: "error",
+          duration: 5200,
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function loadSample() {
     const samples = mockAnalyses.slice(0, 5);
     const sample = samples[sampleIndex % samples.length];
@@ -166,11 +224,13 @@ export function CheckerWorkspace({ initialText = "" }: { initialText?: string })
         </Drawer>
       </div>
       <div className="mx-auto w-full max-w-3xl space-y-4 pt-10 xl:pt-0">
+        <MockModeBanner />
         {!online ? <ErrorState title="Offline mode" description="You appear to be offline. Mock history remains visible, but analysis may not complete." /> : null}
         <TextAnalysisEditor
           value={text}
           onChange={updateText}
           onAnalyze={() => void runAnalysis()}
+          onImageAnalyze={(base64Image, mimeType) => void runImageAnalysis(base64Image, mimeType)}
           onLoadSample={loadSample}
           loading={loading}
           result={result}

@@ -74,10 +74,23 @@ export function ResultSummaryCard({ result, variant = "default" }: { result: Ana
         <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${toneClass[presentation.tone]}`}>
           <Icon className="h-5 w-5" aria-hidden="true" />
         </span>
-        <div>
-          <p className="text-sm font-medium text-muted">Automated estimate</p>
-          <p className="mt-2 text-sm text-muted">{presentation.interpretation}</p>
-          <p className="mt-2 text-sm text-muted">{result.summary}</p>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold uppercase tracking-wider text-muted">Classifier verdict</p>
+          <p className="mt-1.5 text-sm text-muted leading-relaxed">{presentation.interpretation}</p>
+          
+          {result.summary && (
+            <div className="mt-4 pt-4 border-t border-border/60">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted">AI-Generated Context</p>
+                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-bold text-primary uppercase tracking-wide">
+                  Groq LLaMA 3.3
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-muted/90 italic leading-relaxed pl-3 border-l-2 border-primary/25 bg-canvas/30 py-2 rounded-r-lg">
+                {result.summary}
+              </p>
+            </div>
+          )}
         </div>
       </div>
       <div className="mt-5">

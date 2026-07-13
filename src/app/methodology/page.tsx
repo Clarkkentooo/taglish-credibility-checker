@@ -17,8 +17,8 @@ const sections = [
   },
   {
     icon: BrainCircuit,
-    title: "Compared transformer models",
-    text: "The research context compares RoBERTa-Tagalog, mBERT, and XLM-RoBERTa to inspect consistency across model families.",
+    title: "Deployed transformer model",
+    text: "The live prototype uses a fine-tuned XLM-RoBERTa model (TsekTxt). RoBERTa-Tagalog and mBERT were evaluated as part of the comparative research.",
   },
   {
     icon: ShieldQuestion,
@@ -35,7 +35,7 @@ export default function MethodologyPage() {
         <p className="text-sm font-semibold text-primary">Methodology</p>
         <h1 className="mt-3 text-5xl font-black tracking-[0.015em]">Plain-language model explanation</h1>
         <p className="mt-4 max-w-3xl text-lg text-muted">
-          {brand.name} is designed as a screening interface for a Taglish credibility-classification research workflow. The frontend currently uses realistic mock data.
+          {brand.name} is designed as a screening interface for a Taglish credibility-classification research workflow, powered by a fine-tuned XLM-RoBERTa model.
         </p>
         <div className="mt-10 grid gap-4 md:grid-cols-2">
           {sections.map((section) => {
@@ -52,7 +52,7 @@ export default function MethodologyPage() {
         <section className="mt-10 rounded-[1.75rem] border border-white/70 bg-white/70 p-6 shadow-sm backdrop-blur">
           <h2 className="text-2xl font-semibold">How the estimate should be read</h2>
           <div className="mt-5 grid gap-4 md:grid-cols-3">
-            {["Input text", "Model comparison", "Influential phrases"].map((step, index) => (
+            {["Input text", "Model classification", "Influential phrases"].map((step, index) => (
               <div key={step} className="rounded-[1.25rem] bg-white/55 p-4">
                 <span className="grid h-9 w-9 place-items-center rounded-full bg-ink font-semibold text-white">{index + 1}</span>
                 <h3 className="mt-4 font-semibold">{step}</h3>
@@ -60,12 +60,18 @@ export default function MethodologyPage() {
                   {index === 0
                     ? "The user supplies Taglish election-related text."
                     : index === 1
-                      ? "Mock probabilities show how the three model families lean."
+                      ? "The XLM-RoBERTa model returns a confidence score and suspicious vs. not-suspicious classification."
                       : "Highlights explain what language features influenced the result."}
                 </p>
               </div>
             ))}
           </div>
+        </section>
+        <section className="mt-10 rounded-[1.75rem] border border-white/70 bg-white/70 p-6 shadow-sm backdrop-blur">
+          <h2 className="text-2xl font-semibold">Role of Groq LLaMA 3.3</h2>
+          <p className="mt-3 text-muted">
+            Under our methodology, <strong>Groq LLaMA 3.3</strong> acts strictly as a <strong>verdict interpreter</strong>. The classification decision (Suspicious or Not Suspicious) and suspicion confidence scores are determined entirely by the primary fine-tuned <strong>XLM-RoBERTa</strong> transformer model. Once the classification is made, Groq is invoked to generate plain-language explanations, contextualize token attributions, and summarize the language patterns in the source text.
+          </p>
         </section>
         <section className="mt-10 rounded-[1.75rem] border border-caution/25 bg-white/65 p-6 shadow-glow backdrop-blur">
           <h2 className="text-2xl font-semibold">Limitations</h2>

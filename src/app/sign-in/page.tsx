@@ -1,46 +1,86 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
-import { ButtonLink } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SignInPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    const supabase = createClient();
+    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
+      return;
+    }
+    router.push("/dashboard");
+    router.refresh();
+  }
+
   return (
-    <main className="grid min-h-screen place-items-center px-4 py-10">
-      <div className="grid w-full max-w-5xl gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <Card className="hidden overflow-hidden p-0 shadow-soft lg:block">
-          <Image src="/caps-illus/sign-in.svg" alt="Reviewer holding notes illustration" width={1254} height={1254} className="h-[30rem] w-full object-contain p-8" priority />
+    <main className="relative h-[100dvh] overflow-hidden bg-white">
+      <Image
+        src="/caps-illus/signin-illustration.svg"
+        alt=""
+        width={1600}
+        height={1200}
+        priority
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-[-26dvh] left-[-14vw] h-[58dvh] w-[128vw] max-w-none object-cover object-bottom sm:bottom-[-24dvh] sm:h-[64dvh] lg:bottom-auto lg:left-[-2.5vw] lg:top-[-8vh] lg:h-[120vh] lg:w-[69vw] lg:object-cover lg:object-left-top"
+      />
+      <div className="relative z-10 flex h-full items-center justify-center px-4 py-4 sm:px-6 lg:justify-end lg:px-[10vw]">
+        <Card className="w-full max-w-[34rem] overflow-hidden rounded-[1.75rem] border-white/75 bg-white p-5 shadow-soft sm:p-8 lg:max-w-[30rem]">
+          <BrandLogo />
+          <h1 className="mt-6 text-4xl font-black tracking-[0.015em] sm:mt-8">Sign in</h1>
+          <p className="mt-2 text-sm leading-6 text-muted sm:text-base">
+            Welcome back. Sign in to access your analysis history.
+          </p>
+          <form className="mt-6 space-y-4" onSubmit={(e) => void handleSubmit(e)}>
+            <label className="block text-sm font-semibold">
+              Email
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-2 min-h-11 w-full rounded-full border border-transparent bg-white/40 px-4 text-base text-ink transition placeholder:text-muted/55 focus:border-primary focus:bg-white"
+                placeholder="you@example.com"
+              />
+            </label>
+            <label className="block text-sm font-semibold">
+              Password
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-2 min-h-11 w-full rounded-full border border-transparent bg-white/40 px-4 text-base text-ink transition placeholder:text-muted/55 focus:border-primary focus:bg-white"
+                placeholder="Password"
+              />
+            </label>
+            {error ? <p className="text-sm text-red-500" role="alert">{error}</p> : null}
+            <Button type="submit" className="mt-2 w-full" disabled={loading}>
+              {loading ? "Signing in..." : "Sign in"}
+            </Button>
+          </form>
+          <p className="mt-5 text-sm text-muted">
+            New here? <Link href="/sign-up" className="font-semibold text-primary">Create an account</Link>
+          </p>
         </Card>
-      <Card className="w-full max-w-md justify-self-center p-6 shadow-glow">
-        <BrandLogo />
-        <h1 className="mt-8 text-3xl font-black tracking-[0.015em]">Sign in</h1>
-        <p id="auth-demo-note" className="mt-2 text-sm text-muted">
-          Authentication is mocked for this frontend milestone. Use any email/password to enter the demo dashboard.
-        </p>
-        <ButtonLink href="/dashboard" variant="secondary" className="mt-6 w-full gap-2">
-          <span className="grid h-5 w-5 place-items-center rounded-full bg-white text-sm font-black text-ink">G</span>
-          Sign in with Google
-        </ButtonLink>
-        <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-[0.16em] text-muted">
-          <span className="h-px flex-1 bg-border" />
-          Or use email
-          <span className="h-px flex-1 bg-border" />
-        </div>
-        <form className="space-y-4" aria-describedby="auth-demo-note">
-          <label className="block text-sm font-medium">
-            Email
-            <input type="email" autoComplete="email" className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" placeholder="demo@tsek.local" />
-          </label>
-          <label className="block text-sm font-medium">
-            Password
-            <input type="password" autoComplete="current-password" className="mt-2 min-h-11 w-full rounded-full border border-white/80 bg-white/65 px-4" placeholder="Any password" />
-          </label>
-          <ButtonLink href="/dashboard" className="w-full">Continue to demo dashboard</ButtonLink>
-        </form>
-        <p className="mt-5 text-sm text-muted">
-          New here? <Link href="/sign-up" className="font-semibold text-primary hover:text-ink">Create a demo account</Link>
-        </p>
-      </Card>
       </div>
     </main>
   );

@@ -1,6 +1,0 @@
-fastapi==0.115.5
-uvicorn==0.32.1
-transformers==4.47.1
-torch
-captum==0.7.0
-huggingface-hub==0.27.0
