@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { ButtonLink } from "@/components/ui/button";
 import { marketingNavigation } from "@/config/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 export function MarketingHeader() {
@@ -28,7 +29,9 @@ export function MarketingHeader() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  function handleSignOut() {
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
     localStorage.removeItem("tsektxt_logged_in");
     setIsLoggedIn(false);
   }

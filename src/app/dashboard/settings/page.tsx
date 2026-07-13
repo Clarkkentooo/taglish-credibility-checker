@@ -5,13 +5,16 @@ import { useRouter } from "next/navigation";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SettingsPage() {
   const router = useRouter();
   const [theme, setTheme] = useState("system");
   const [notice, setNotice] = useState("");
 
-  function handleLogout() {
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
     localStorage.removeItem("tsektxt_logged_in");
     router.push("/sign-in");
   }

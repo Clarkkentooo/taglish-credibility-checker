@@ -1,0 +1,240 @@
+TsekTxt,Project Name:,TsekTxt - Taglish Credibility Checker,Test Designed by:,"Fernandez, Samantha Nicole",,,,,,
+,Module Name:,Text/Image Analysis | Results/Explainability | AI Robustness | Security | Auth | History | Accessibility | Mobile | Reliability | Performance,Test Designed date: ,"July 7, 2026",,,,,,
+,Release Version:,v1.1,Test Executed by: ,TsekTxt Development Team,,,,,,
+,,,Test Execution date: ,TBD,,,,,,
+,,,,,,,,,,
+Pre-condition,"Web application deployed and accessible. FastAPI backend running on port 8000 and serving the fine-tuned XLM-RoBERTa model (chimsio/tsektxt-xlmr) as the PRIMARY classifier. Integrated Gradients attribution enabled. Groq vision (image OCR) and Groq LLaMA 3.3 (deterministic plain-language interpretation only, not the verdict) configured. User is on the home page.",,,,,,,,,
+Dependencies:,"Next.js frontend, FastAPI backend (port 8000), HuggingFace model chimsio/tsektxt-xlmr (fine-tuned xlm-roberta-base), PyTorch + Transformers + Captum, Groq API (vision OCR + LLaMA 3.3 interpretation), internet connection.",,,,,,,,,
+Test Priority,"High: TC-001 to TC-012, TC-025, TC-030 to TC-049, TC-068 to TC-078 (core classification, results, explainability, API, model accuracy, image OCR, AI robustness, security, reliability, load/stress) | Medium: TC-013 to TC-019, TC-028 to TC-029, TC-050 to TC-062 (auth incl. edge & boundary, history) | Low: TC-020 to TC-024, TC-026 to TC-027, TC-063 to TC-067, TC-079 (UI/UX, accessibility, mobile). Scope: text AND image (OCR) input; the two-class verdict (Not Suspicious / Suspicious) is produced by the XLM-RoBERTa model; explainability via Integrated Gradients; Groq LLaMA 3.3 only generates the plain-language interpretation. Accuracy target: >= 90% accuracy and >= 0.90 macro-F1 (fine-tuned chimsio/tsektxt-xlmr reports 0.97 accuracy). Performance benchmarks assume the reference test environment stated in TC-023.",,,,,,,,,
+,,,,,,,,,,
+Test Case#,Test Title,Test Summary,Test Steps,Test Data,Expected Result,Post-condition,Actual Result,Status,Notes,Assigned Tester
+TEXT ANALYSIS,,,,,,,,,,
+TC-001,Valid Taglish Text - Not Suspicious,"Verify that a verified, factual Taglish statement is classified as Not Suspicious.","1. Open the checker workspace.
+2. Paste a verified factual Taglish statement.
+3. Click the Tsek/Submit button.
+4. Observe the results panel.","""Ayon sa opisyal na pahayag ng COMELEC, magiging bukas ang mga polling precincts sa Mayo 12, 2025 mula 6AM hanggang 7PM.""",Results panel shows a 'Not Suspicious' verdict with a confidence score. Integrated Gradients token highlights are displayed.,"Results panel populated with verdict, confidence, and token highlights.",,Pending,Use a pre-labeled Not Suspicious sample. Verdict from chimsio/tsektxt-xlmr (primary) served via FastAPI.,"Arca, Hans Jio (Backend/API)"
+TC-002,Valid Taglish Text - Suspicious,Verify that content with mixed/uncertain credibility signals is classified as Suspicious.,"1. Open the checker workspace.
+2. Paste a Taglish statement with unverified/hearsay markers.
+3. Click Submit.
+4. Observe the results panel.","""May kumakalat na balita na daw ipagpapaliban ang eleksyon, pero wala pang kumpirmasyon mula sa opisyal na tanggapan.""",Results panel shows a 'Suspicious' verdict with a confidence score and token highlights.,Results panel populated with a Suspicious verdict.,,Pending,Use a pre-labeled Suspicious sample from the dataset.,"Arca, Hans Jio (Backend/API)"
+TC-003,Valid Taglish Text - Suspicious (High Confidence),Verify that a known misinformation claim with urgency/conspiracy framing is classified as Suspicious with high confidence.,"1. Open the checker workspace.
+2. Paste a known Taglish misinformation claim.
+3. Click Submit.
+4. Observe the results panel.","""BREAKING: Napatunayan na raw ng mga eksperto na ang bakuna ay nagdudulot ng microchip sa katawan. Share agad bago ma-delete!""",Results panel shows a 'Suspicious' verdict with a high confidence score and token highlights.,Results panel populated with a Suspicious verdict at high confidence.,,Pending,Use a pre-labeled clear-misinformation sample. The model outputs only two classes (Suspicious / Not Suspicious); strong misinformation should return Suspicious at high confidence.,"Arca, Hans Jio (Backend/API)"
+TC-004,Empty Text Submission,Verify that submitting an empty text field shows a validation error and does not call the API.,"1. Open the checker workspace.
+2. Leave the text field empty.
+3. Click Submit.
+4. Observe the response.",Empty string,"System displays a validation message (e.g., 'Please enter text to analyze'). The FastAPI model endpoint is NOT called.",Text field remains empty. No results panel shown.,,Pending,Confirm no network request in browser DevTools.,"Arca, Hans Jio (Backend/API)"
+TC-005,Text Exceeding Maximum Length,Verify the system handles input longer than the model 512-token limit without crashing.,"1. Paste a paragraph exceeding ~512 tokens.
+2. Click Submit.
+3. Observe the response.",A ~800-word Taglish paragraph,"System truncates gracefully to the model max length (512 tokens) and returns a verdict, or shows a clear length notice. No crash.",System remains functional after submission.,,Pending,"Model max_length = 512 (FastAPI backend, chimsio/tsektxt-xlmr).","Arca, Hans Jio (Backend/API)"
+TC-006,English-Only Text,Verify the system processes English-only text and returns a verdict.,"1. Paste an English-only statement.
+2. Click Submit.
+3. Observe the results panel.","""The Philippine government announced a new infrastructure project worth 10 billion pesos.""",System returns a verdict and confidence score; may note low Taglish content. No error.,Results panel populated.,,Pending,XLM-R is multilingual - verify it does not error out.,"Arca, Hans Jio (Backend/API)"
+TC-007,Filipino-Only Text,Verify the system processes Filipino-only text and returns a verdict.,"1. Paste a Filipino-only statement.
+2. Click Submit.
+3. Observe the results panel.","""Ayon sa balita, maraming tao ang naapektuhan ng bagyo sa probinsya.""",System returns a verdict and confidence score.,Results panel populated.,,Pending,,"Arca, Hans Jio (Backend/API)"
+RESULTS DISPLAY & EXPLAINABILITY,,,,,,,,,,
+TC-008,Verdict Label Accuracy,Verify the displayed verdict matches the model output (Not Suspicious / Suspicious).,"1. Submit a text with a known expected label.
+2. Compare the displayed verdict against the expected model output.",Pre-labeled Taglish sample (expected: Suspicious),Displayed verdict matches the expected label returned by chimsio/tsektxt-xlmr.,Results panel verdict is accurate.,,Pending,Cross-reference with a direct FastAPI model call (see TC-012).,"Fernandez, Samantha Nicole (Test Lead/QA)"
+TC-009,Confidence Score Display,Verify the confidence percentage is shown and falls between 0% and 100%.,"1. Submit a valid Taglish text.
+2. Check the confidence score in the results panel.
+3. Verify value is 0-100%.",Any valid Taglish text,Confidence score is displayed as a percentage between 0% and 100%.,Confidence score visible in results panel.,,Pending,Confidence = softmax probability of the predicted class.,"Fernandez, Samantha Nicole (Test Lead/QA)"
+TC-010,Integrated Gradients Token Highlights,Verify the results panel highlights the tokens that most influenced the classification using Integrated Gradients attribution.,"1. Submit a valid Taglish text.
+2. Inspect the highlighted tokens.
+3. Verify at least 3 tokens are highlighted.","Any valid Taglish text with clear signal words (e.g., 'daw', 'share agad')","At least 3 tokens are visually highlighted, corresponding to the highest Integrated Gradients attribution weights from the XLM-RoBERTa model.",Token highlights visible and traceable to attribution weights.,,Pending,Highlights from Integrated Gradients (Captum) computed on the fine-tuned model; not random.,"Fernandez, Samantha Nicole (Test Lead/QA)"
+TC-011,Responsible-Use Notice Displayed,Verify the responsible-use / disclaimer notice appears with every result.,"1. Submit any valid Taglish text.
+2. Confirm the responsible-use notice is visible with the result.",Any valid Taglish text,Disclaimer stating the tool is an aid and not a definitive fact-checker is displayed with the result.,Notice visible below the verdict.,,Pending,"Aligns with proposal 'credibility aid, not fact-checking authority'.","Fernandez, Samantha Nicole (Test Lead/QA)"
+TC-012,FastAPI Model Endpoint Direct Response,"Verify the FastAPI inference endpoint returns well-formed JSON with the model label, probabilities, confidence, and Integrated Gradients attributions.","1. Send a POST request to the FastAPI endpoint /analyze (port 8000) with a text payload.
+2. Inspect the JSON response.","POST http://127.0.0.1:8000/analyze  { ""text"": ""<Taglish text>"" }","Response contains: label (suspicious/not_suspicious), suspicious/not_suspicious probabilities, confidence (0-100), and tokenAttributions[]. HTTP 200.",Endpoint returns valid schema consumable by the Next.js route.,,Pending,Grey-box cross-check of the served chimsio/tsektxt-xlmr model (primary classifier).,"Arca, Hans Jio (Backend/API)"
+AUTHENTICATION,,,,,,,,,,
+TC-013,Sign-Up with Valid Credentials,Verify a new user can register with a valid email and password.,"1. Go to the sign-up page.
+2. Enter a valid email and a compliant password.
+3. Click Sign Up.
+4. Observe the response.","Email: testuser@gmail.com
+Password: Test@1234",Account is created. User is redirected to the dashboard/home page.,User is authenticated and logged in.,,Pending,,"Amba, Clark (Frontend/UI)"
+TC-014,Sign-Up with Duplicate Email,Verify the system rejects sign-up with an already-registered email.,"1. Attempt to sign up with an already-registered email.
+2. Observe the error.",Email: existing@gmail.com (already registered),System displays: 'An account with this email already exists.',User remains on the sign-up page.,,Pending,,"Amba, Clark (Frontend/UI)"
+TC-015,Sign-In with Valid Credentials,Verify a registered user can log in successfully.,"1. Go to the sign-in page.
+2. Enter valid registered credentials.
+3. Click Sign In.
+4. Observe the redirect.","Email: testuser@gmail.com
+Password: Test@1234",User is authenticated and redirected to the dashboard.,User can access protected pages.,,Pending,,"Amba, Clark (Frontend/UI)"
+TC-016,Sign-In with Invalid Credentials,Verify the system rejects login attempts with wrong credentials.,"1. Go to the sign-in page.
+2. Enter a registered email with a wrong password.
+3. Click Sign In.
+4. Observe the response.","Email: testuser@gmail.com
+Password: WrongPass999",System displays: 'Invalid email or password.' User is not logged in.,User remains on the sign-in page.,,Pending,,"Amba, Clark (Frontend/UI)"
+TC-017,Sign-Out Clears Session,Verify signing out ends the session and blocks protected pages.,"1. While logged in, click Sign Out.
+2. Attempt to open a protected page (e.g., /dashboard).",Authenticated session,Session is cleared; protected pages redirect to sign-in.,User is logged out.,,Pending,,"Amba, Clark (Frontend/UI)"
+HISTORY,,,,,,,,,,
+TC-018,Analysis Logged After Text Submission,Verify a completed text analysis is saved to the history page.,"1. Log in.
+2. Submit a Taglish text and receive a verdict.
+3. Open the History page.
+4. Verify the entry is present.",Any valid Taglish text,"History shows the submitted text, verdict, confidence score, and timestamp.",History entry saved and accessible.,,Pending,,"Amba, Clark (Frontend/UI)"
+TC-019,History Display and Retrieval,Verify history entries render correctly and can be reopened.,"1. Open the History page with existing entries.
+2. Verify list rendering, filters, and sorting.
+3. Open a single entry.",Existing history entries,Entries render with correct fields; opening an entry shows its full analysis.,History is navigable and accurate.,,Pending,,"Amba, Clark (Frontend/UI)"
+UI/UX DESIGN,,,,,,,,,,
+TC-020,Landing Page Renders Correctly,Verify the landing page renders all content and branding without layout errors.,"1. Open the app root URL.
+2. Verify the hero, brand logo, CTA, and sections render.",Home page (desktop viewport),All landing content renders correctly with no broken layout or missing assets.,Landing page is presentable.,,Pending,Covers UI/UX gap missing from the prior test set.,"Amba, Clark (Frontend/UI)"
+TC-021,Navigation and Routing,Verify navigation links route to the correct pages without 404s.,"1. Click each nav link (Checker, Methodology, Privacy, Sign in, etc.).
+2. Verify each destination loads.",All primary navigation links,Every link routes to the correct page; no 404 or wrong-page errors.,Navigation is consistent across the app.,,Pending,,"Amba, Clark (Frontend/UI)"
+TC-022,Mobile Responsiveness,Verify the layout adapts correctly to a mobile viewport.,"1. Open the app at a 375px-wide viewport.
+2. Verify the checker, results, and nav adapt without overflow.",Mobile viewport (approx 375x812),Layout is responsive; content is readable; the mobile navigation works.,App is usable on mobile.,,Pending,,"Amba, Clark (Frontend/UI)"
+PERFORMANCE & RELIABILITY,,,,,,,,,,
+TC-023,Text Analysis API Response Time,Verify the text classification pipeline responds within 10-15 seconds on the stated local-CPU reference environment.,"1. Record the test environment (see Test Data / Notes).
+2. Submit a valid Taglish text (~50 words).
+3. Start a timer at submission; stop when the results panel appears.
+4. Record the time.","Any valid Taglish text (~50 words). Reference environment: Intel Core i5 (or equivalent), 8 GB RAM, CPU-only inference, ~20 Mbps broadband, FastAPI backend on localhost.",Results appear within 10-15 seconds of submission on the stated local-CPU reference environment.,Response time within the defined benchmark for the stated environment.,,Pending,"Local CPU inference is slow (~10-15s), driven mainly by Integrated Gradients; cloud/GPU deployment is much faster. Record hardware (CPU/GPU, RAM), network, and local vs remote backend. Run 3 times and average; note FastAPI + model inference latency separately; state the actual environment used.","Fernandez, Samantha Nicole (Test Lead/QA)"
+TC-024,Repeated-Submission Consistency (Reliability),Verify identical inputs yield consistent verdicts and confidence across repeated runs.,"1. Submit the same Taglish text 5 times.
+2. Compare verdicts and confidence scores.","One fixed Taglish text, submitted 5x",Verdict is identical across runs; confidence is stable (deterministic inference).,Model output is reproducible.,,Pending,Reliability check under FURPS.,"Fernandez, Samantha Nicole (Test Lead/QA)"
+MODEL ACCURACY,,,,,,,,,,
+TC-025,Model Classification Accuracy Benchmark,Verify the classifier meets the defined accuracy target on a labeled benchmark set.,"1. Prepare a labeled benchmark set (>=100 Taglish samples stratified across the 2 classes: Suspicious / Not Suspicious).
+2. Submit each sample (or batch-call the FastAPI endpoint).
+3. Compare predictions to ground-truth labels.
+4. Compute accuracy and macro-F1.","Labeled benchmark set (>=100 samples, stratified by class)",Overall accuracy >= 90% and macro-F1 >= 0.90 on the benchmark set (fine-tuned chimsio/tsektxt-xlmr reports 0.97 accuracy on its held-out test split).,Accuracy and macro-F1 recorded in the test report.,,Pending,Cross-check against the model card metrics. Run via direct FastAPI calls.,"Arca, Hans Jio (Backend/API)"
+ACCESSIBILITY,,,,,,,,,,
+TC-026,Keyboard Navigation and Visible Focus,Verify all interactive elements are reachable and operable via keyboard with a visible focus indicator.,"1. Load the checker workspace.
+2. Using only Tab / Shift+Tab / Enter / Space, navigate to the text input, submit button, and navigation links.
+3. Verify the focus indicator is visible and the tab order is logical.",Keyboard-only navigation,"All controls are reachable and operable by keyboard; focus is always visible; there are no keyboard traps. (WCAG 2.1 AA - 2.1.1, 2.4.7)",Keyboard accessibility confirmed.,,Pending,Accessibility check.,"Fernandez, Samantha Nicole (Test Lead/QA)"
+TC-027,Screen-Reader Labels and Color Contrast,Verify controls expose accessible names/ARIA and that text meets contrast requirements.,"1. Inspect inputs, buttons, and the results panel with a screen reader (e.g., NVDA/VoiceOver) and an accessibility inspector.
+2. Verify labels/roles are announced, including the result verdict.
+3. Check text and UI color-contrast ratios.",NVDA / VoiceOver + a color-contrast checker,"All controls have accessible names/labels; the verdict is announced; text contrast ratio >= 4.5:1 (>= 3:1 for large text). (WCAG 2.1 AA - 1.4.3, 4.1.2)",Screen-reader and contrast compliance confirmed.,,Pending,Accessibility check.,"Fernandez, Samantha Nicole (Test Lead/QA)"
+AUTHENTICATION - EDGE CASES,,,,,,,,,,
+TC-028,Multiple Simultaneous Logins,Verify the same account logged in from multiple sessions/devices behaves per the defined session policy.,"1. Log in with the same account in two separate browsers/devices.
+2. Perform an action in each session.
+3. Observe how the sessions behave.","One account, two concurrent sessions","Both sessions behave per policy (either both remain independently valid, or the older session is invalidated) with no data corruption or cross-session leakage.",Concurrent-session behavior is consistent and documented.,,Pending,Login edge case.,"Amba, Clark (Frontend/UI)"
+TC-029,Expired Session Handling,Verify an expired or invalidated session cannot access protected pages and forces re-authentication.,"1. Log in.
+2. Let the session token expire (or clear/expire it manually).
+3. Attempt to open a protected page (e.g., /dashboard, History) or submit an action.",Expired session token,"The system rejects the expired session, redirects to sign-in, and requires re-authentication; no protected data is shown.",Expired sessions are safely handled.,,Pending,Login edge case.,"Amba, Clark (Frontend/UI)"
+IMAGE / OCR ANALYSIS,,,,,,,,,,
+TC-030,Valid Screenshot Upload - Taglish Content,Verify a screenshot containing Taglish text is OCR-extracted and then classified by the model.,"1. Open the checker workspace.
+2. Upload a PNG/JPG screenshot of a Taglish social media post (<5MB).
+3. Observe OCR extraction and the classification results.","Screenshot of a Taglish post (PNG or JPG, <5MB)","Groq vision extracts the text; the extracted text is sent to the XLM-RoBERTa classifier; a verdict (Not Suspicious / Suspicious), confidence, and Integrated Gradients highlights are returned. The extracted text is displayed.",Results panel shows the verdict for the extracted text.,,Pending,Confirm the displayed extracted text matches the screenshot content.,"Arca, Hans Jio (Backend/API)"
+TC-031,Unsupported File Type Upload,Verify that uploading a non-image file is rejected with a clear error.,"1. Attempt to upload a .pdf or .docx file to the image upload zone.
+2. Observe the response.",A .pdf file,"System rejects the upload with an error (valid image required, e.g. image/png or image/jpeg). No OCR or classification is performed.",Upload zone resets; no analysis is triggered.,,Pending,mimeType must start with 'image/'.,"Arca, Hans Jio (Backend/API)"
+TC-032,Image with No Readable Text,Verify an image with no extractable text is handled gracefully.,"1. Upload an image that contains no text (e.g., a plain photograph).
+2. Observe the response.",A JPEG photo with no text,System reports that not enough text was detected (needs >=10 characters) and prompts for a clearer image; no classification is performed and the system does not crash.,No classification performed; system remains functional.,,Pending,OCR returning <10 characters yields HTTP 422.,"Arca, Hans Jio (Backend/API)"
+AI ROBUSTNESS / ADVERSARIAL INPUTS,,,,,,,,,,
+TC-033,Gibberish / Random Keyboard Input,Verify the system handles meaningless random-character input without crashing.,"1. Paste random keyboard characters (>=10 chars).
+2. Submit.
+3. Observe the response.",e.g. 'asdkjh qweoiuq zxcmnb lkjhgf',System returns a verdict (likely low confidence or Suspicious/uncertain) or a graceful notice; it does not crash or hang.,System remains functional.,,Pending,Robustness check; note the verdict and confidence.,"Nunezca, Christian Dysar (Project Manager)"
+TC-034,Emoji-Only Input,Verify emoji-only input is handled gracefully.,"1. Paste only emojis (>=10 chars).
+2. Submit.
+3. Observe the response.","Emoji string, e.g. a row of assorted emojis",System either returns a low-confidence verdict or a clear 'not enough analyzable text' notice; no crash.,System remains functional.,,Pending,Robustness check.,"Nunezca, Christian Dysar (Project Manager)"
+TC-035,Numbers-Only Input,Verify numeric-only input is handled gracefully.,"1. Paste only digits (>=10 chars).
+2. Submit.
+3. Observe the response.",'1234567890 000 111 222',System returns a verdict or a clear notice without crashing.,System remains functional.,,Pending,Robustness check.,"Nunezca, Christian Dysar (Project Manager)"
+TC-036,URL-Only Input,Verify URL-only input is handled and not fetched/executed.,"1. Paste only a URL.
+2. Submit.
+3. Observe the response.",'https://example.com/very/long/path?q=1',System treats the URL as text and returns a verdict; it does NOT fetch or navigate to the URL.,System remains functional; no outbound request to the URL.,,Pending,Robustness + safety check.,"Nunezca, Christian Dysar (Project Manager)"
+TC-037,HTML Input (Sanitization),Verify raw HTML in the input is neutralized (not rendered/executed).,"1. Paste HTML including a tag.
+2. Submit.
+3. Inspect the results panel and highlighted text.",'<b>Fake</b> <img src=x> na balita daw ito',HTML is treated as plain text and escaped; no markup is rendered and no script runs in the results panel.,Input is rendered as inert text.,,Pending,Overlaps with XSS (TC-045).,"Nunezca, Christian Dysar (Project Manager)"
+TC-038,Markdown Input,"Verify Markdown syntax is treated as text, not rendered.","1. Paste Markdown (e.g. links, headers, bold).
+2. Submit.
+3. Observe the results.",'# Fake\n**share agad** [click](http://x)',Markdown is analyzed as literal text; a verdict is returned; the app does not render clickable/formatted Markdown unexpectedly.,System remains functional.,,Pending,Robustness check.,"Nunezca, Christian Dysar (Project Manager)"
+TC-039,SQL Statement as Text,"Verify a SQL-looking string is analyzed as text, not executed.","1. Paste a SQL statement into the text field.
+2. Submit.
+3. Observe the response.","""SELECT * FROM users; DROP TABLE analyses;--""",The string is analyzed as ordinary text and returns a verdict; no database error or side effect occurs.,No backend error; system functional.,,Pending,Overlaps with SQL injection (TC-044).,"Nunezca, Christian Dysar (Project Manager)"
+TC-040,Repeated Characters / Duplicate Sentences,Verify highly repetitive input is handled without performance degradation.,"1. Paste a long run of repeated characters or the same sentence many times.
+2. Submit.
+3. Observe response and timing.",'aaaaaaaaaa...' or the same sentence repeated 50x,System truncates at the model max length and returns a verdict within normal time; no crash or timeout.,System remains functional.,,Pending,Robustness/perf check.,"Nunezca, Christian Dysar (Project Manager)"
+TC-041,Very Short Text (Below Minimum),Verify text shorter than the 10-character minimum is rejected with a message.,"1. Enter a 1-2 word text under 10 characters.
+2. Submit.
+3. Observe the response.",'Fake' (4 chars),System shows a validation message that a minimum length is required; the model endpoint is not called.,No classification; input retained.,,Pending,Boundary of the 10-char minimum.,"Nunezca, Christian Dysar (Project Manager)"
+TC-042,Mixed English-Filipino-Spanish Input,Verify tri-lingual code-switched input is handled.,"1. Paste text mixing English, Filipino, and Spanish.
+2. Submit.
+3. Observe the response.","'Diumano ang eleccion ay fake, according daw sa mga fuentes.'",System returns a verdict and confidence; may note reduced reliability outside Taglish; no crash.,System remains functional.,,Pending,XLM-R is multilingual; note reliability.,"Nunezca, Christian Dysar (Project Manager)"
+TC-043,Contradictory Statements,Verify text with internally contradictory claims is handled.,"1. Paste text that both affirms and denies a claim.
+2. Submit.
+3. Observe the verdict.","'Totoo ang resulta pero peke rin daw ang bilang, tama at mali sabay.'",System returns a verdict (often Suspicious/uncertain) with a confidence score; no crash.,System remains functional.,,Pending,Robustness check; note the verdict.,"Nunezca, Christian Dysar (Project Manager)"
+SECURITY,,,,,,,,,,
+TC-044,SQL Injection (Login & Text Field),Verify injection payloads cannot manipulate backend queries.,"1. Enter a SQL injection payload in the email/password and in the text field.
+2. Submit each.
+3. Observe behavior and server logs.","Email: "" ' OR '1'='1 ""  |  Text: ""'; DROP TABLE users;--""",Payloads are treated as data (parameterized/sanitized); login is not bypassed and no database error/side effect occurs.,No unauthorized access; no DB change.,,Pending,Check server logs; parameterized queries expected.,"Nunezca, Christian Dysar (Project Manager)"
+TC-045,Cross-Site Scripting (XSS),Verify script payloads are not executed in the UI.,"1. Submit a script payload as text and (if applicable) in profile fields.
+2. View the result and history entry.",'<script>alert(1)</script> na balita daw',"The payload is escaped and displayed as inert text; no alert/script executes anywhere it is later rendered (results, history).",No script execution.,,Pending,Stored + reflected XSS.,"Nunezca, Christian Dysar (Project Manager)"
+TC-046,CSRF Protection,Verify state-changing requests require a valid anti-CSRF token/session (if applicable).,"1. From an external origin, craft a POST to a state-changing endpoint (e.g. delete history) without a CSRF token.
+2. Observe the response.",Cross-origin forged POST request,The request is rejected (missing/invalid token or SameSite cookie); no state change occurs.,No unauthorized state change.,,Pending,Mark N/A with justification if the app is stateless/token-based.,"Nunezca, Christian Dysar (Project Manager)"
+TC-047,Brute-Force Login & Account Lockout,Verify repeated failed logins are throttled or locked out.,"1. Attempt many rapid failed logins for one account.
+2. Observe throttling/lockout behavior.",20+ consecutive wrong-password attempts,"After a threshold, the system rate-limits or temporarily locks the account and shows an appropriate message.",Account protected from brute force.,,Pending,Record threshold and lockout duration.,"Nunezca, Christian Dysar (Project Manager)"
+TC-048,Invalid / Expired Authentication Token,Verify tampered or expired tokens are rejected.,"1. Present a tampered/invalid token, then an expired token, to a protected endpoint.
+2. Observe the responses.",Malformed JWT / expired session token,Both are rejected with 401/redirect to sign-in; no protected data is returned.,Protected resources stay protected.,,Pending,Complements TC-029 (expired session).,"Nunezca, Christian Dysar (Project Manager)"
+TC-049,Unauthorized / Direct API Access,Verify protected data/endpoints require authentication.,"1. Without logging in, call a protected endpoint or another user's history URL directly.
+2. Observe the response.",Direct request to a protected route / another user's analysis id,System denies access (401/403) and does not leak another user's data.,No unauthorized data disclosure.,,Pending,Access-control / IDOR check.,"Nunezca, Christian Dysar (Project Manager)"
+AUTHENTICATION - BOUNDARY,,,,,,,,,,
+TC-050,Maximum Email Length,Verify very long emails are handled or rejected cleanly.,"1. Enter an email at/above the max allowed length.
+2. Submit.",254+ character email address,System accepts up to the defined maximum and rejects longer values with a clear message; no crash.,Input handled per boundary rule.,,Pending,RFC 5321 max is 254 chars.,"Amba, Clark (Frontend/UI)"
+TC-051,Minimum Password Length,Verify passwords below the minimum are rejected.,"1. Enter a password shorter than the minimum.
+2. Submit.",e.g. '123' (below policy minimum),System rejects with a clear minimum-length message; account is not created/login not attempted.,Weak password rejected.,,Pending,State the policy minimum (e.g. 8).,"Amba, Clark (Frontend/UI)"
+TC-052,Maximum Password Length,Verify very long passwords are handled without error.,"1. Enter a very long password (e.g. 128+ chars).
+2. Submit.",128+ character password,System accepts up to the defined maximum (or rejects cleanly); no crash or truncation that breaks later login.,Input handled per boundary rule.,,Pending,Guard against DoS via unbounded hashing.,"Amba, Clark (Frontend/UI)"
+TC-053,Invalid Email Formats,Verify malformed emails are rejected.,"1. Enter malformed emails (missing @, double dots, spaces, etc.).
+2. Submit each.","'user@', 'user@@x', 'a b@x.com', 'user'",Each malformed email is rejected with a validation message.,Invalid emails rejected.,,Pending,Test several formats.,"Amba, Clark (Frontend/UI)"
+TC-054,Unicode Characters in Password,Verify non-ASCII passwords are accepted and usable.,"1. Register with a password containing Unicode/emoji.
+2. Sign out and sign back in with it.",Password with accented + emoji characters,Registration and subsequent login both succeed with the exact Unicode password.,Unicode credentials work.,,Pending,Check normalization consistency.,"Amba, Clark (Frontend/UI)"
+TC-055,Leading / Trailing Spaces in Credentials,Verify surrounding whitespace is handled predictably.,"1. Enter email/password with leading and trailing spaces.
+2. Submit.",'  user@x.com  ' / '  Test@1234  ',Email is trimmed; password whitespace is handled per a documented rule (trim or preserve) consistently between sign-up and sign-in.,Consistent whitespace handling.,,Pending,Document the chosen rule.,"Amba, Clark (Frontend/UI)"
+HISTORY - EXPANDED,,,,,,,,,,
+TC-056,Empty History Page,Verify a new user with no analyses sees an empty state.,"1. Sign in as a user with no history.
+2. Open the History page.",Account with zero analyses,"An empty-state message is shown (no errors, no phantom rows).",Empty state displayed.,,Pending,,"Fernandez, Samantha Nicole (Test Lead/QA)"
+TC-057,Delete History Entry,Verify a history entry can be deleted.,"1. Open History with entries.
+2. Delete one entry and confirm.
+3. Reload the page.",Existing history entries,The entry is removed and does not reappear after reload.,Entry permanently removed for the session/store.,,Pending,,"Fernandez, Samantha Nicole (Test Lead/QA)"
+TC-058,Filter History by Verdict,Verify filtering by verdict works.,"1. Open History.
+2. Filter by Not Suspicious, then Suspicious.",History with mixed verdicts,Only entries matching the selected verdict are shown for each filter.,Filter returns correct subset.,,Pending,,"Fernandez, Samantha Nicole (Test Lead/QA)"
+TC-059,Search History,Verify searching history by text/title works.,"1. Open History.
+2. Enter a search term matching some entries.",Search keyword present in some titles/text,Only matching entries are shown; clearing the search restores the full list.,Search returns correct matches.,,Pending,,"Fernandez, Samantha Nicole (Test Lead/QA)"
+TC-060,History Pagination,Verify pagination (or lazy load) for long history.,"1. Populate history beyond one page.
+2. Navigate through pages / scroll.",History with more entries than one page,Entries are paginated or lazily loaded correctly; navigation shows all entries without duplication.,Pagination works.,,Pending,"If capped (e.g. 50), verify the cap behavior.","Fernandez, Samantha Nicole (Test Lead/QA)"
+TC-061,Export History,Verify history can be exported (if supported).,"1. Trigger export.
+2. Open the exported file.",Existing history entries,An export file (e.g. CSV/JSON) is produced containing the correct entries and fields.,Export contains accurate data.,,Pending,Mark N/A with justification if export is not in scope.,"Fernandez, Samantha Nicole (Test Lead/QA)"
+TC-062,"Very Large History (1,000+ entries)",Verify the History page remains usable at scale.,"1. Load history with 1,000+ entries.
+2. Scroll, filter, and search.","1,000+ history entries",The page loads and remains responsive (or applies a documented cap); no freeze or crash.,History usable at scale.,,Pending,Note the storage cap if one exists (e.g. 50 in localStorage).,"Fernandez, Samantha Nicole (Test Lead/QA)"
+MOBILE - EXPANDED,,,,,,,,,,
+TC-063,Portrait vs Landscape Orientation,Verify layout adapts to both orientations.,"1. Open the app on mobile in portrait.
+2. Rotate to landscape.
+3. Check checker, results, nav.",Mobile device / emulator,Layout reflows correctly in both orientations without clipped or overlapping content.,Both orientations usable.,,Pending,,"Amba, Clark (Frontend/UI)"
+TC-064,Tablet Layout,Verify the tablet breakpoint renders correctly.,"1. Open the app at a tablet viewport (e.g. 768x1024).
+2. Review key pages.",Tablet viewport (~768x1024),Layout uses appropriate tablet spacing/columns; nothing is broken or oversized.,Tablet layout correct.,,Pending,,"Amba, Clark (Frontend/UI)"
+TC-065,Touch Interactions,Verify touch targets and gestures work.,"1. On a touch device, tap buttons, open menus/drawers, and submit.
+2. Check tap target sizes.",Touch device / emulator,All controls respond to touch; tap targets are adequately sized; no hover-only actions block usage.,Touch fully functional.,,Pending,,"Amba, Clark (Frontend/UI)"
+TC-066,Small-Screen Overflow,Verify no horizontal overflow on small screens.,"1. Open the app at a 320px-wide viewport.
+2. Inspect each page for horizontal scroll/overflow.",Very small viewport (~320px),Content fits within the viewport with no unintended horizontal scrolling or clipped text.,No overflow at 320px.,,Pending,,"Amba, Clark (Frontend/UI)"
+TC-067,Cross-Browser (Mobile),Verify the app works across mobile browsers.,"1. Open the app in mobile Chrome, Safari (iOS), and Firefox.
+2. Run the core flow in each.",Multiple mobile browsers,"Core flow (submit, results, history) works consistently across the tested browsers.",Consistent behavior across browsers.,,Pending,,"Amba, Clark (Frontend/UI)"
+RELIABILITY,,,,,,,,,,
+TC-068,Backend (FastAPI) Unavailable,Verify a clear error when the model server is down.,"1. Stop the FastAPI backend.
+2. Submit a text analysis.
+3. Observe the response.",Any valid Taglish text; FastAPI stopped,System shows a clear 'could not reach the model server' error; it does not hang or crash.,Graceful failure; app usable afterward.,,Pending,Route returns 502 in this case.,"Arca, Hans Jio (Backend/API)"
+TC-069,Model Unavailable / Not Loaded,Verify handling when the model has not finished loading.,"1. Send a request before/while the model loads (or with a bad model id).
+2. Observe the response.",Request during model load / invalid MODEL_NAME,System returns a clear 'model not ready' error (e.g. 503) and recovers once the model is loaded.,"Clear, non-crashing error.",,Pending,,"Arca, Hans Jio (Backend/API)"
+TC-070,Inference Timeout,Verify a slow/hung inference is bounded by a timeout.,"1. Simulate a slow backend (delay).
+2. Submit and wait.
+3. Observe the response.",Artificially delayed backend response,The request times out with a clear message rather than hanging indefinitely.,Bounded wait; clear timeout message.,,Pending,Confirm a client/route timeout exists.,"Arca, Hans Jio (Backend/API)"
+TC-071,Internet Disconnected,Verify offline behavior is handled.,"1. Disconnect the network.
+2. Submit a text analysis (real-backend mode).
+3. Observe the response.",Network offline,System shows a clear network-error message; the UI remains responsive and recovers when back online.,Graceful offline handling.,,Pending,,"Arca, Hans Jio (Backend/API)"
+TC-072,Retry After Failed Request,Verify a failed request can be retried successfully.,"1. Cause a request to fail (backend down).
+2. Restore the backend.
+3. Resubmit the same input.","Same input, retried after recovery",The retry succeeds and returns a correct result; no stuck/broken UI state remains.,Retry works cleanly.,,Pending,,"Arca, Hans Jio (Backend/API)"
+TC-073,Partial / Malformed API Response,Verify malformed backend/LLM responses are handled.,"1. Force the backend or Groq to return malformed/partial JSON.
+2. Submit.
+3. Observe the response.",Malformed/truncated JSON from a dependency,System falls back gracefully (e.g. model-only result or clear error) without crashing or showing corrupt data.,Graceful degradation.,,Pending,Route already has a Groq fallback path.,"Arca, Hans Jio (Backend/API)"
+PERFORMANCE - LOAD & STRESS,,,,,,,,,,
+TC-074,100 Concurrent Users,Verify the system handles 100 concurrent analysis requests.,"1. Use a load tool (e.g. k6/JMeter) to drive 100 concurrent /api/analyze requests.
+2. Record success rate and latency.",100 concurrent virtual users; reference environment (see TC-023),System sustains the load with an acceptable success rate and p95 latency; no crashes or unhandled errors.,System stable under concurrency.,,Pending,"Record throughput, error rate, p95.","Arca, Hans Jio (Backend/API)"
+TC-075,Multiple Simultaneous Submissions,Verify rapid simultaneous submissions are queued/handled.,"1. Fire several analysis requests at once from one client.
+2. Observe results and ordering.",5-10 simultaneous submissions,"All requests complete with correct, non-mixed results; the UI does not freeze.",All submissions handled correctly.,,Pending,,"Arca, Hans Jio (Backend/API)"
+TC-076,Large Request Queue,Verify behavior when requests queue up faster than they are served.,"1. Submit a burst larger than server concurrency.
+2. Observe queueing/backpressure.",Burst exceeding server concurrency,"Requests queue and complete, or excess requests are rejected with a clear message; no crash or data corruption.","Bounded, predictable queue behavior.",,Pending,,"Arca, Hans Jio (Backend/API)"
+TC-077,Memory Usage During Inference,Verify memory stays within limits during repeated inference.,"1. Run many sequential inferences.
+2. Monitor backend memory (RSS) over time.",Sustained sequential requests; memory monitor,Memory usage stays within an acceptable bound and does not grow unbounded (no leak) across requests.,Stable memory; no leak.,,Pending,Note peak RSS and any growth trend.,"Arca, Hans Jio (Backend/API)"
+TC-078,Sustained Stress Test,Verify stability under sustained high load over time.,"1. Run a sustained load (e.g. 30-60 min) at high request rate.
+2. Monitor errors, latency, and resources.",Sustained high load over 30-60 min,"System remains stable throughout with no memory exhaustion, crash, or growing error rate.",System endures sustained stress.,,Pending,Capture resource graphs and error trend.,"Arca, Hans Jio (Backend/API)"
+ACCESSIBILITY - EXPANDED,,,,,,,,,,
+TC-079,Accessible Error Messages & Focus Order,Verify errors are announced and focus order is logical.,"1. Trigger a validation error (e.g. empty submit, invalid login).
+2. Check the error is programmatically associated and announced.
+3. Tab through the page and verify focus order.",Screen reader + keyboard,Error messages are linked to their fields (aria-describedby / role=alert) and announced by the screen reader; focus moves logically and to the first error.,Errors are accessible; focus order logical.,,Pending,"WCAG 2.1 AA - 3.3.1, 4.1.3, 2.4.3.","Fernandez, Samantha Nicole (Test Lead/QA)"
