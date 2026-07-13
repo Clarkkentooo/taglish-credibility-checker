@@ -1,13 +1,14 @@
 "use client";
 
-import { MoreHorizontal, PanelLeftClose, UserCircle2 } from "lucide-react";
+import { LogOut, MoreHorizontal, PanelLeftClose, UserCircle2 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/config/brand";
 import { appNavigation } from "@/config/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 export function AppSidebar() {
@@ -105,24 +106,46 @@ export function AccountSettingsLink({
   onNavigate?: () => void;
   className?: string;
 }) {
+  const router = useRouter();
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/sign-in");
+    router.refresh();
+  }
+
   return (
-    <Link
-      href="/dashboard/settings"
-      title={collapsed ? "Account settings" : undefined}
-      onClick={onNavigate}
-      aria-current={pathname === "/dashboard/settings" ? "page" : undefined}
-      className={cn(
-        "flex min-h-10 items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
-        collapsed ? "justify-center px-0" : "gap-3 px-3",
-        pathname === "/dashboard/settings" && "bg-ink text-white shadow-sm hover:bg-ink hover:text-white",
-        className,
-      )}
-    >
-      <UserCircle2 className="h-7 w-7 shrink-0" aria-hidden="true" />
-      <span className={cn("min-w-0 flex-1 whitespace-nowrap transition-[opacity,transform,width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "w-0 translate-x-3 opacity-0" : "w-auto translate-x-0 opacity-100")}>
-        Demo reviewer
-      </span>
-      {!collapsed ? <MoreHorizontal className="h-4 w-4 shrink-0" aria-hidden="true" /> : null}
-    </Link>
+    <div className={cn("space-y-1", className)}>
+      <Link
+        href="/dashboard/settings"
+        title={collapsed ? "Account settings" : undefined}
+        onClick={onNavigate}
+        aria-current={pathname === "/dashboard/settings" ? "page" : undefined}
+        className={cn(
+          "flex min-h-10 items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
+          collapsed ? "justify-center px-0" : "gap-3 px-3",
+          pathname === "/dashboard/settings" && "bg-ink text-white shadow-sm hover:bg-ink hover:text-white",
+        )}
+      >
+        <UserCircle2 className="h-7 w-7 shrink-0" aria-hidden="true" />
+        <span className={cn("min-w-0 flex-1 whitespace-nowrap transition-[opacity,transform,width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "w-0 translate-x-3 opacity-0" : "w-auto translate-x-0 opacity-100")}>
+          Account
+        </span>
+        {!collapsed ? <MoreHorizontal className="h-4 w-4 shrink-0" aria-hidden="true" /> : null}
+      </Link>
+      <button
+        type="button"
+        title={collapsed ? "Sign out" : undefined}
+        onClick={() => void handleSignOut()}
+        className={cn(
+          "flex min-h-10 w-full items-center overflow-hidden rounded-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:bg-canvas hover:text-ink",
+          collapsed ? "justify-center px-0" : "gap-3 px-3",
+        )}
+      >
+        <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
+        <span className={cn("whitespace-nowrap transition-[opacity,transform,width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]", collapsed ? "w-0 translate-x-3 opacity-0" : "w-auto translate-x-0 opacity-100")}>Sign out</span>
+      </button>
+    </div>
   );
 }
