@@ -7,7 +7,7 @@ export type HighlightCategory =
   | "linguistic_pattern";
 
 export interface ModelScore {
-  model: "RoBERTa-Tagalog" | "mBERT" | "XLM-RoBERTa";
+  model: string;
   credibleProbability: number;
   notCredibleProbability: number;
 }

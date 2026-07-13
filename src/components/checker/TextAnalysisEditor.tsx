@@ -1,7 +1,7 @@
 "use client";
 
 import { Eye, EyeOff, FileText, ImageUp, RotateCcw, Trash2, Type } from "lucide-react";
-import { type DragEvent, type ChangeEvent, useMemo, useRef, useState } from "react";
+import { type DragEvent, type ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { OverflowActions } from "@/components/beui/overflow-actions";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/beui/tabs";
@@ -14,6 +14,7 @@ export function TextAnalysisEditor({
   value,
   onChange,
   onAnalyze,
+  onImageAnalyze,
   onLoadSample,
   loading,
   result,
@@ -21,6 +22,7 @@ export function TextAnalysisEditor({
   value: string;
   onChange: (value: string) => void;
   onAnalyze: () => void;
+  onImageAnalyze: (base64Image: string, mimeType: string) => void;
   onLoadSample: () => void;
   loading: boolean;
   result?: AnalysisResult | null;
@@ -33,10 +35,19 @@ export function TextAnalysisEditor({
   const fileRef = useRef<HTMLInputElement>(null);
   const words = useMemo(() => countWords(value), [value]);
   const tooShort = value.trim().length > 0 && value.trim().length < 50;
+
+  // When OCR populates the text while in image mode, auto-switch to text mode
+  // so the user can see and edit the extracted text
+  useEffect(() => {
+    if (inputMode === "image" && value && result) {
+      setInputMode("text");
+    }
+  }, [value, result, inputMode]);
+
   const uploadAccept = inputMode === "image" ? "image/*" : ".txt,.docx";
   const uploadDescription =
     inputMode === "image"
-      ? "Attach an image file with readable text. OCR is mocked for now."
+      ? "Attach an image file with readable text. Text will be extracted automatically."
       : "Attach `.txt` or `.docx` files. Document parsing is mocked for now.";
   const UploadIcon = inputMode === "image" ? ImageUp : FileText;
 
@@ -45,8 +56,16 @@ export function TextAnalysisEditor({
     const isTxt = file.name.endsWith(".txt");
     const isDocx = file.name.endsWith(".docx");
     if (inputMode === "image" && isImage) {
-      setUploadMessage("Image received. OCR is mocked in this frontend demo.");
-      onChange(`${brand.sampleText}\n\n[Mocked content extracted from ${file.name}]`);
+      setUploadMessage(`Reading ${file.name}…`);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        // dataUrl = "data:<mimeType>;base64,<data>"
+        const base64 = dataUrl.split(",")[1] ?? "";
+        onImageAnalyze(base64, file.type);
+        setUploadMessage("");
+      };
+      reader.readAsDataURL(file);
       return;
     }
     if (!isTxt && !isDocx) {
@@ -78,7 +97,7 @@ export function TextAnalysisEditor({
       <div className="flex flex-col items-center gap-3 text-center">
         <div>
           <h1 id="editor-heading" className="text-2xl font-black tracking-[0.015em] sm:text-3xl">Check Taglish content</h1>
-          <p className="mt-1 text-sm text-muted">Paste election-related content or import a document/image for a mock OCR-ready flow.</p>
+          <p className="mt-1 text-sm text-muted">Paste election-related content or upload an image — text will be extracted and shown for review.</p>
         </div>
       </div>
       <div className="mt-5 flex flex-wrap items-center justify-center gap-3 lg:justify-between">
@@ -188,9 +207,9 @@ export function TextAnalysisEditor({
           <div>
             <ImageUp className="mx-auto h-9 w-9 text-primary" aria-hidden="true" />
             <h2 className="mt-4 text-xl font-semibold">Upload an image with text</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm text-muted">Drag a screenshot or social media image here. OCR is mocked for now, but the interface is ready for backend extraction.</p>
-            <Button variant="secondary" className="mt-5" onClick={() => fileRef.current?.click()}>
-              Choose image
+            <p className="mx-auto mt-2 max-w-md text-sm text-muted">Drag a screenshot or social media image here. The text will be extracted and shown for review before analysis.</p>
+            <Button variant="secondary" className="mt-5" onClick={() => fileRef.current?.click()} disabled={loading}>
+              {loading ? "Extracting text…" : "Choose image"}
             </Button>
           </div>
         </div>

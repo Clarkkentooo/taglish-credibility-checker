@@ -1,13 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
 export default function SettingsPage() {
+  const router = useRouter();
   const [theme, setTheme] = useState("system");
   const [notice, setNotice] = useState("");
+
+  function handleLogout() {
+    localStorage.removeItem("tsektxt_logged_in");
+    router.push("/sign-in");
+  }
 
   return (
     <div className="mx-auto w-full space-y-5 lg:w-1/2">
@@ -55,9 +62,9 @@ export default function SettingsPage() {
       <Card className="p-5">
         <h2 className="text-xl font-semibold">Account</h2>
         <p className="mt-2 text-muted">End the mocked session and return to the sign-in page.</p>
-        <ButtonLink href="/sign-in" variant="secondary" className="mt-4">
+        <Button onClick={handleLogout} variant="secondary" className="mt-4">
           Log out
-        </ButtonLink>
+        </Button>
       </Card>
     </div>
   );

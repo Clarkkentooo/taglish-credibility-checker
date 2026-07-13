@@ -9,7 +9,7 @@ import { mockAnalyses } from "@/lib/mocks/analyses";
 const valueItems = [
   ["Taglish-aware", "Designed around Filipino-English election-content patterns."],
   ["Explainable signals", "Shows the phrases and categories that influenced the estimate."],
-  ["Model comparison", "Keeps RoBERTa-Tagalog, mBERT, and XLM-RoBERTa visible but secondary."],
+  ["Model-backed analysis", "Powered by a fine-tuned XLM-RoBERTa model (TsekTxt), with RoBERTa-Tagalog and mBERT studied in the comparative research."],
 ];
 
 export default function LandingPage() {

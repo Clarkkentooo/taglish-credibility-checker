@@ -8,9 +8,12 @@ import { cn } from "@/lib/utils";
 
 export function MarketingHeader() {
   const [visible, setVisible] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const lastY = useRef(0);
 
   useEffect(() => {
+    setIsLoggedIn(localStorage.getItem("tsektxt_logged_in") === "true");
+
     function handleScroll() {
       const currentY = window.scrollY;
       const scrollingUp = currentY < lastY.current;
@@ -25,6 +28,11 @@ export function MarketingHeader() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  function handleSignOut() {
+    localStorage.removeItem("tsektxt_logged_in");
+    setIsLoggedIn(false);
+  }
+
   return (
     <header className={cn("sticky top-0 z-40 px-3 py-3 transition-transform duration-300", visible ? "translate-y-0" : "-translate-y-full")}>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 rounded-full border border-white/70 bg-white/70 px-4 py-3 shadow-sm backdrop-blur-xl sm:px-5">
@@ -37,13 +45,30 @@ export function MarketingHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <ButtonLink href="/sign-in" variant="ghost" className="min-h-9 px-3 text-xs sm:min-h-11 sm:px-5 sm:text-sm">
-            Sign in
-          </ButtonLink>
-          <ButtonLink href="/checker" className="min-h-9 px-3 text-xs sm:min-h-11 sm:px-5 sm:text-sm">
-            <span className="sm:hidden">Checker</span>
-            <span className="hidden sm:inline">Open checker</span>
-          </ButtonLink>
+          {isLoggedIn ? (
+            <>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="inline-flex min-h-9 items-center justify-center rounded-full px-3 text-xs font-semibold text-muted transition hover:bg-canvas/30 hover:text-ink sm:min-h-11 sm:px-5 sm:text-sm"
+              >
+                Sign out
+              </button>
+              <ButtonLink href="/dashboard" className="min-h-9 px-3 text-xs sm:min-h-11 sm:px-5 sm:text-sm">
+                Dashboard
+              </ButtonLink>
+            </>
+          ) : (
+            <>
+              <ButtonLink href="/sign-in" variant="ghost" className="min-h-9 px-3 text-xs sm:min-h-11 sm:px-5 sm:text-sm">
+                Sign in
+              </ButtonLink>
+              <ButtonLink href="/checker" className="min-h-9 px-3 text-xs sm:min-h-11 sm:px-5 sm:text-sm">
+                <span className="sm:hidden">Checker</span>
+                <span className="hidden sm:inline">Open checker</span>
+              </ButtonLink>
+            </>
+          )}
         </div>
       </div>
     </header>

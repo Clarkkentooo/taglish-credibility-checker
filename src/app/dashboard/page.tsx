@@ -1,18 +1,45 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { ButtonLink } from "@/components/ui/button";
+import { Skeleton } from "@/components/states/Skeleton";
 import { dashboardStats } from "@/config/navigation";
-import { mockAnalyses } from "@/lib/mocks/analyses";
+import { getAnalyses } from "@/lib/api/analysis";
 import { getStatusLabel } from "@/lib/presentation";
 import { formatDate } from "@/lib/utils";
+import type { AnalysisResult } from "@/types/analysis";
 
 export default function DashboardPage() {
+  const [analyses, setAnalyses] = useState<AnalysisResult[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getAnalyses()
+      .then(setAnalyses)
+      .finally(() => setLoading(false));
+  }, []);
+
   const counts = {
-    total: mockAnalyses.length,
-    credible: mockAnalyses.filter((item) => item.status === "credible").length,
-    notCredible: mockAnalyses.filter((item) => item.status === "not_credible").length,
-    uncertain: mockAnalyses.filter((item) => item.status === "uncertain").length,
+    total: analyses.length,
+    credible: analyses.filter((item) => item.status === "credible").length,
+    notCredible: analyses.filter((item) => item.status === "not_credible").length,
+    uncertain: analyses.filter((item) => item.status === "uncertain").length,
   };
+
+  if (loading) {
+    return (
+      <div className="mx-auto w-full space-y-6 lg:w-1/2">
+        <Skeleton className="h-28 w-full" />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
+        </div>
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full space-y-6 lg:w-1/2">
@@ -20,7 +47,7 @@ export default function DashboardPage() {
         <div>
           <p className="text-sm font-semibold text-primary">Demo dashboard</p>
           <h1 className="mt-2 text-4xl font-black tracking-[0.015em]">Welcome back.</h1>
-          <p className="mt-2 text-muted">Start a new suspiciousness check or revisit recent mock results.</p>
+          <p className="mt-2 text-muted">Start a new suspiciousness check or revisit recent results.</p>
         </div>
         <ButtonLink href="/dashboard/checker" className="w-full sm:w-auto">New analysis</ButtonLink>
       </section>
@@ -30,8 +57,8 @@ export default function DashboardPage() {
           return (
             <Card key={stat.key} className="p-5">
               <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
-              <p className="mt-4 text-sm text-muted">{stat.label} - Demo data</p>
-              <p className="mt-2 text-3xl font-bold">{counts[stat.key]}</p>
+              <p className="mt-4 text-sm text-muted">{stat.label}</p>
+              <p className="mt-2 text-3xl font-bold">{counts[stat.key as keyof typeof counts]}</p>
             </Card>
           );
         })}
@@ -44,7 +71,7 @@ export default function DashboardPage() {
           </Link>
         </div>
         <div className="grid gap-3">
-          {mockAnalyses.slice(0, 4).map((analysis) => (
+          {analyses.slice(0, 4).map((analysis) => (
             <Link key={analysis.id} href={`/dashboard/history/${analysis.id}`} className="rounded-[1.25rem] border border-white/70 bg-white/68 p-4 shadow-sm transition hover:bg-white/90">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">

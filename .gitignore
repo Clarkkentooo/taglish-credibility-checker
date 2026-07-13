@@ -6,3 +6,7 @@ playwright-report
 test-results
 .env*.local
 *.tsbuildinfo
+venv
+.venv
+fastapi-backend/venv
+*.log

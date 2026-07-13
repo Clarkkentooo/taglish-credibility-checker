@@ -8,7 +8,7 @@ import { ErrorState } from "@/components/states/ErrorState";
 import { Skeleton } from "@/components/states/Skeleton";
 import { HistoryCard } from "@/components/history/HistoryCard";
 import { HistoryTable } from "@/components/history/HistoryTable";
-import { deleteAnalysis, getAnalyses } from "@/lib/api/analysis";
+import { deleteAnalysis, getAnalyses, renameAnalysis } from "@/lib/api/analysis";
 import type { AnalysisResult, AnalysisStatus } from "@/types/analysis";
 
 type Sort = "newest" | "oldest" | "confidence";
@@ -51,9 +51,13 @@ export function HistoryClient() {
     setNotice("Analysis deleted in mock mode.");
   }
 
-  function rename(id: string) {
-    setAnalyses((items) => items.map((item) => (item.id === id ? { ...item, title: `${item.title} (renamed)` } : item)));
-    setNotice("Analysis renamed in mock mode.");
+  async function rename(id: string) {
+    const existing = analyses.find((item) => item.id === id);
+    if (!existing) return;
+    const newTitle = `${existing.title} (renamed)`;
+    await renameAnalysis(id, newTitle);
+    setAnalyses((items) => items.map((item) => (item.id === id ? { ...item, title: newTitle } : item)));
+    setNotice("Analysis renamed.");
   }
 
   if (loading) {

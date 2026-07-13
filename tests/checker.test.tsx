@@ -16,7 +16,7 @@ describe("Checker workspace", () => {
     await userEvent.click(screen.getAllByRole("button", { name: /load sample/i })[0]);
     await userEvent.click(screen.getByRole("button", { name: /run suspiciousness check/i }));
     expect(screen.getAllByText(/analyzing misinformation-associated signals/i).length).toBeGreaterThan(0);
-    await waitFor(() => expect(screen.getAllByText(/automated estimate/i).length).toBeGreaterThan(0), { timeout: 3000 });
+    await waitFor(() => expect(screen.getAllByText(/classifier verdict/i).length).toBeGreaterThan(0), { timeout: 3000 });
     await userEvent.click(screen.getAllByRole("button", { name: /responsible use/i })[0]);
     expect(screen.getAllByText(/This result is an automated estimate/i).length).toBeGreaterThan(0);
   });
@@ -34,6 +34,6 @@ describe("Checker workspace", () => {
     await userEvent.click(screen.getByRole("button", { name: /show results/i }));
 
     expect(screen.getByRole("dialog", { name: /analysis results/i })).toBeInTheDocument();
-    await waitFor(() => expect(screen.getAllByText(/automated estimate/i).length).toBeGreaterThan(0));
+    await waitFor(() => expect(screen.getAllByText(/classifier verdict/i).length).toBeGreaterThan(0));
   });
 });
