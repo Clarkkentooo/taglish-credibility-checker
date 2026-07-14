@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
-      <body className={`${ibmPlexSerif.variable} ${instrumentSerif.variable}`}>{children}</body>
+      <body suppressHydrationWarning className={`${ibmPlexSerif.variable} ${instrumentSerif.variable}`}>{children}</body>
     </html>
   );
 }
