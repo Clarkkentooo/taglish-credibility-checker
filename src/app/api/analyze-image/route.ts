@@ -99,20 +99,29 @@ async function extractTextFromImage(base64Image: string, mimeType: string): Prom
     },
     body: JSON.stringify({
       model: GROQ_VISION_MODEL,
-      messages: [{
-        role: "user",
-        content: [
-          { type: "image_url", image_url: { url: `data:${mimeType};base64,${base64Image}` } },
-          { type: "text", text: "Extract all text from this image exactly as it appears. Return only the extracted text, no commentary." },
-        ],
-      }],
+      messages: [
+        {
+          role: "system",
+          content: "You are a text extraction tool. Output ONLY the raw text found in images. Never add introductions, labels, descriptions, or commentary. Do not start with phrases like 'This image contains' or 'The text in the image is'. Just output the text directly.",
+        },
+        {
+          role: "user",
+          content: [
+            { type: "image_url", image_url: { url: `data:${mimeType};base64,${base64Image}` } },
+            { type: "text", text: "Copy every piece of text and emoji visible in this image exactly as it appears. Output ONLY the raw text — no introductions, no labels, no descriptions, no commentary. Do not say 'this image contains' or anything similar. Just the text itself." },
+          ],
+        },
+      ],
       temperature: 0.1,
       max_tokens: 1024,
     }),
   });
   if (!response.ok) throw new Error(`Vision model error ${response.status}`);
   const json = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
-  return json.choices?.[0]?.message?.content?.trim() ?? "";
+  let text = json.choices?.[0]?.message?.content?.trim() ?? "";
+  // Strip any preamble the model might still add
+  text = text.replace(/^(this image contains[:\s]*|the text (in|from) the image[:\s]*|here is the (extracted )?text[:\s]*)/i, "").trim();
+  return text;
 }
 
 async function getGroqVerdict(sourceText: string, fastapi: FastAPIResult): Promise<GroqVerdict> {
